@@ -53,7 +53,7 @@ public class MsgPrinter {
 	 * @param status a status message
 	 */
 	public static synchronized void printStatusMsg(String status) {
-		if (statusMsgs) printMessage(status);
+		if (statusMsgs) printMessage(System.currentTimeMillis()+" "+getTimestamp() + ": " + status);
 	}
 	
 	/**
@@ -410,9 +410,9 @@ public class MsgPrinter {
 		printMessage("\nSorry, I don't know the answer.");
 	}
 	
-	/**	the DateFormat object used in getTimespamt
+	/**	the DateFormat object used in getTimestamp
 	 */
-	private static SimpleDateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	/**
 	 * @return	a timestamp String for logging
