@@ -1,5 +1,7 @@
 package info.ephyra.questionanalysis;
 
+import edu.cmu.lti.javelin.util.Language;
+import edu.cmu.lti.util.Pair;
 import info.ephyra.io.Logger;
 import info.ephyra.io.MsgPrinter;
 import info.ephyra.nlp.indices.WordFrequencies;
@@ -17,9 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import edu.cmu.lti.javelin.util.Language;
-import edu.cmu.lti.util.Pair;
 
 /**
  * Analyzes a question string:
@@ -200,52 +199,63 @@ public class QuestionAnalysis {
 	 */
 	public static AnalyzedQuestion analyze(String question) {
 		// normalize question
-		String qn = QuestionNormalizer.normalize(question);
+        MsgPrinter.printStatusMsg("2.1 Analyzing question....normalize question");
+        String qn = QuestionNormalizer.normalize(question);
 		
 		// stem verbs and nouns
-		String stemmed = QuestionNormalizer.stemVerbsAndNouns(qn);
+        MsgPrinter.printStatusMsg("2.2 Analyzing question....stem verbs and nouns");
+        String stemmed = QuestionNormalizer.stemVerbsAndNouns(qn);
 		MsgPrinter.printNormalization(stemmed);
 		Logger.logNormalization(stemmed);
 		
 		// resolve verb constructions with auxiliaries
-		String verbMod = (QuestionNormalizer.handleAuxiliaries(qn))[0];
+        MsgPrinter.printStatusMsg("2.3 Analyzing question....resolve verb constructions with auxiliaries");
+        String verbMod = (QuestionNormalizer.handleAuxiliaries(qn))[0];
 		// TODO return only one best string
 		
 		// extract keywords
-		String[] kws = KeywordExtractor.getKeywords(verbMod, context);
-		
+        MsgPrinter.printStatusMsg("2.4 Analyzing question....extract keywords");
+        String[] kws = KeywordExtractor.getKeywords(verbMod, context);
+
 		// extract named entities
-		String[][] nes = TermExtractor.getNes(question, context);
+        MsgPrinter.printStatusMsg("2.5 Analyzing question....extract named entities");
+        String[][] nes = TermExtractor.getNes(question, context);
 		
 		// extract terms and set relative frequencies
-		Term[] terms = TermExtractor.getTerms(verbMod, context, nes,
+        MsgPrinter.printStatusMsg("2.6 Analyzing question....extract terms and set relative frequencies");
+        Term[] terms = TermExtractor.getTerms(verbMod, context, nes,
 				dicts.toArray(new Dictionary[dicts.size()]));
 		for (Term term : terms)
 			term.setRelFrequency(WordFrequencies.lookupRel(term.getText()));
 		
 		// extract focus word
-		String focus = FocusFinder.findFocusWord(question);
+        MsgPrinter.printStatusMsg("2.7 Analyzing question....extract focus word");
+        String focus = FocusFinder.findFocusWord(question);
 		
 		// determine answer types
-		//String[] ats = AnswerTypeTester.getAnswerTypes(qn, stemmed);
+        MsgPrinter.printStatusMsg("2.8 Analyzing question....determine answer types");
+        //String[] ats = AnswerTypeTester.getAnswerTypes(qn, stemmed);
         String[] ats = getAtypes(question);
 		MsgPrinter.printAnswerTypes(ats);
 		Logger.logAnswerTypes(ats);
 		
 		// interpret question
-		QuestionInterpretation[] qis =
+        MsgPrinter.printStatusMsg("2.9 Analyzing question....interpret question");
+        QuestionInterpretation[] qis =
 			QuestionInterpreter.interpret(qn, stemmed);
 		MsgPrinter.printInterpretations(qis);
 		Logger.logInterpretations(qis);
 		
 		// extract predicates
-		Predicate[] ps = (predicates != null) ? predicates
+        MsgPrinter.printStatusMsg("2.10 Analyzing question....extract predicates");
+        Predicate[] ps = (predicates != null) ? predicates
 				: PredicateExtractor.getPredicates(qn, verbMod, ats, terms);
 		MsgPrinter.printPredicates(ps);
 		Logger.logPredicates(ps);
 		
 		// expand terms
-		TermExpander.expandTerms(terms, ps,
+        MsgPrinter.printStatusMsg("2.11 Analyzing question....expand terms");
+        TermExpander.expandTerms(terms, ps,
 				ontologies.toArray(new Ontology[ontologies.size()]));
 		
 		return new AnalyzedQuestion(question, qn, stemmed, verbMod, kws, nes,

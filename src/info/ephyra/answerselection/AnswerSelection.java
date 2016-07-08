@@ -52,15 +52,16 @@ public class AnswerSelection {
 	public static Result[] getResults(Result[] results, int maxResults,
 									  float minScore) {
 		// apply filters
-		for (Filter filter : filters) {
+        MsgPrinter.printStatusMsg("3.3.1 Getting answers....selecting answers....applying filters");
+        for (Filter filter : filters) {
 			MsgPrinter.printFilterStarted(filter, results.length);
 			results = filter.apply(results);
 			MsgPrinter.printFilterFinished(filter, results.length);
 		}
 
-		MsgPrinter.printTarget("Finished....");
 		// get up to maxResults results with a score of at least minScore
-		ArrayList<Result> resultsList = new ArrayList<Result>();
+        MsgPrinter.printStatusMsg("3.3.2 Getting answers....selecting answers....processing results(maxResults&minScore)");
+        ArrayList<Result> resultsList = new ArrayList<Result>();
 		for (Result result : results) {
 			if (maxResults == 0) break;
 			
@@ -69,7 +70,8 @@ public class AnswerSelection {
 				maxResults--;
 			}
 		}
-		
-		return resultsList.toArray(new Result[resultsList.size()]);
+
+        MsgPrinter.printStatusMsg("4.Finished....");
+        return resultsList.toArray(new Result[resultsList.size()]);
 	}
 }
