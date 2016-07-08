@@ -43,6 +43,7 @@ import java.util.ArrayList;
  * @version 2008-03-23
  */
 public class OpenEphyraServer extends AbstractHandler {
+    public static long timestamp = 0;
     /**
      * Factoid question type.
      */
@@ -416,6 +417,7 @@ public class OpenEphyraServer extends AbstractHandler {
      */
     public Result[] askFactoid(String question, int maxAnswers,
                                float absThresh) {
+        timestamp = System.currentTimeMillis();
         // initialize pipeline
         MsgPrinter.printStatusMsg("1. Initializing pipeline....");
         initFactoid();
