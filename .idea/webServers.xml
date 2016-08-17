@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="3ac9070c-9fe8-4720-95e6-d780d13b416b" name="tk1" url="http://130.245.145.11">
-        <fileTransfer host="130.245.145.11" port="22" privateKey="$USER_HOME$/.ssh/id_rsa_tk1" rootFolder="/home/ubuntu/tk1/sirius/sirius-application/question-answer" accessType="SFTP" username="ubuntu" keyPair="true">
+      <webServer id="3ac9070c-9fe8-4720-95e6-d780d13b416b" name="macm" url="http://130.245.145.211">
+        <fileTransfer host="130.245.145.211" port="22" privateKey="$USER_HOME$/.ssh/id_rsa_macmini" rootFolder="/home/qqcao/Desktop/sirius/sirius-application/question-answer" accessType="SFTP" keyPair="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>

@@ -2,8 +2,6 @@ package info.ephyra.nlp;
 
 import info.ephyra.util.Properties;
 
-import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -14,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import edu.cmu.lti.javelin.util.DeltaRangeMap;
 import edu.cmu.lti.javelin.util.RangeMap;
@@ -28,71 +28,90 @@ import edu.stanford.nlp.trees.TreebankLanguagePack;
 
 /**
  * Wrapper for the Stanford parser.
- *
+ * 
  * @author Justin Betteridge, Nico Schlaefer
  * @version 2007-10-30
  */
-public class StanfordParser {
-    public static final String BEGIN_KEY = "begin";
-    public static final String END_KEY = "end";
+public class StanfordParser
+{
     protected static final Logger log = Logger.getLogger(StanfordParser.class);
     protected static final Pattern whitespace_pattern = Pattern.compile("\\s+");
     protected static final Pattern escaped_char_pattern = Pattern.compile("\\\\/");
     protected static final Pattern double_quote_lable_pattern = Pattern.compile("[`'][`']");
     protected static final Pattern bracket_label_pattern = Pattern.compile("-...-");
+
+    public static final String BEGIN_KEY = "begin";
+    public static final String END_KEY = "end";
+    
+    protected static class MutableInteger {
+        public int value;
+        public MutableInteger() { value = 0; }
+        public MutableInteger(int i) { value = i; }
+        public String toString() { return Integer.toString(value); }
+        public int getValue() { return value; }
+        public void setValue(int i) { value = i; }
+    }
+
     protected static TreebankLanguagePack tlp = null;
     protected static LexicalizedParser parser = null;
+
     /**
      * Hide default ctor.
      */
-    protected StanfordParser() {
-    }
+    protected StanfordParser() {}
 
     /**
      * Initializes static resources.
+     * 
+     * @throws Exception
      */
-    public static void initialize() throws Exception {
+    public static void initialize() throws Exception
+    {
         if (parser != null) return;
         Properties properties = Properties.loadFromClassName(StanfordParser.class.getName());
         tlp = new PennTreebankLanguagePack();
         String modelFile = properties.getProperty("modelFile");
         if (modelFile == null)
-            throw new Exception("Required property '"
-                    + "modelFile' is undefined");
+            throw new Exception("Required property '" 
+                + "modelFile' is undefined");
         parser = new LexicalizedParser(modelFile);
     }
 
     /**
      * Unloads static resources.
+     * 
+     * @throws Exception
      */
-    public static void destroy() throws Exception {
+    public static void destroy() throws Exception
+    {
         tlp = null;
         parser = null;
     }
-
+    
     /**
      * Parses a sentence and returns a string representation of the parse tree.
-     *
+     * 
      * @param sentence a sentence
-     * @return Tree whose Label is a MapLabel containing correct begin and end character offsets in
-     * keys BEGIN_KEY and END_KEY
+     * @return Tree whose Label is a MapLabel containing correct begin and end
+     * character offsets in keys BEGIN_KEY and END_KEY
      */
-    @SuppressWarnings("unchecked")
-    public static String parse(String sentence) {
+	@SuppressWarnings("unchecked")
+    public static String parse(String sentence)
+    {
         if (tlp == null || parser == null)
             throw new RuntimeException("Parser has not been initialized");
-
+        
         // parse the sentence to produce stanford Tree
         log.debug("Parsing sentence");
         Tree tree = null;
         synchronized (parser) {
             Tokenizer tokenizer = tlp.getTokenizerFactory().getTokenizer(new StringReader(sentence));
             List<Word> words = tokenizer.tokenize();
-            log.debug("Tokenization: " + words);
+            log.debug("Tokenization: "+words);
             parser.parse(new Sentence(words));
             tree = parser.getBestParse();
         }
-
+        
         // label tree with character extents
         //log.debug("Setting character extents");
         //updateTreeLabels(tree, tree, new MutableInteger(), new MutableInteger(-1));
@@ -101,36 +120,37 @@ public class StanfordParser {
         //log.debug(mapping.toString());
         //log.debug("Applying offset mapping");
         //mapOffsets(tree, mapping);
-
-        return tree.toString().replaceAll(" \\[[\\S]+\\]", "");
+        
+        return tree.toString().replaceAll(" \\[[\\S]+\\]","");
     }
-
-    /**
-     * Parses a sentence and returns the PCFG score as a confidence measure.
-     *
-     * @param sentence a sentence
-     * @return PCFG score
-     */
-    @SuppressWarnings("unchecked")
-    public static double getPCFGScore(String sentence) {
+	
+	/**
+	 * Parses a sentence and returns the PCFG score as a confidence measure.
+	 * 
+	 * @param sentence a sentence
+	 * @return PCFG score
+	 */
+	@SuppressWarnings("unchecked")
+	public static double getPCFGScore(String sentence) {
         if (tlp == null || parser == null)
             throw new RuntimeException("Parser has not been initialized");
-
+        
         // parse the sentence to produce PCFG score
         log.debug("Parsing sentence");
         double score;
         synchronized (parser) {
             Tokenizer tokenizer = tlp.getTokenizerFactory().getTokenizer(new StringReader(sentence));
             List<Word> words = tokenizer.tokenize();
-            log.debug("Tokenization: " + words);
+            log.debug("Tokenization: "+words);
             parser.parse(new Sentence(words));
             score = parser.getPCFGScore();
         }
-
+        
         return score;
-    }
-
-    protected static void updateTreeLabels(Tree root, Tree tree, MutableInteger offset, MutableInteger leafIndex) {
+	}
+    
+    protected static void updateTreeLabels(Tree root, Tree tree, MutableInteger offset, MutableInteger leafIndex)
+    {
         if (tree.isLeaf()) {
             leafIndex.value++;
             return;
@@ -140,17 +160,17 @@ public class StanfordParser {
         int end = root.rightCharEdge(tree);
         //System.out.println(labelValue+"("+begin+","+end+")");
         int length = end - begin;
-
+        
         // apply offset to begin extent
         begin += offset.value;
-
+        
         // calculate offset delta based on label
         if (double_quote_lable_pattern.matcher(labelValue).matches() && length > 1) {
             offset.value--;
-            log.debug("Quotes label pattern fired: " + offset);
+            log.debug("Quotes label pattern fired: "+offset);
         } else if (bracket_label_pattern.matcher(labelValue).matches()) {
             offset.value -= 4;
-            log.debug("Bracket label pattern fired: " + offset);
+            log.debug("Bracket label pattern fired: "+offset);
         } else if (tree.isPreTerminal()) {
             Tree leaf = tree.firstChild();
             String text = leaf.label().value();
@@ -159,7 +179,7 @@ public class StanfordParser {
                 offset.value--;
             }
         }
-
+        
         for (Tree child : tree.children())
             updateTreeLabels(root, child, offset, leafIndex);
 
@@ -175,10 +195,13 @@ public class StanfordParser {
     }
 
     /**
-     * @return a list of RangeMap objects which define a mapping of character offsets in a
-     * white-space depleted version of the input string back into offsets in the input string.
+     * @param sentence
+     * @return a list of RangeMap objects which define a mapping of character
+     * offsets in a white-space depleted version of the input string back into
+     * offsets in the input string.
      */
-    protected static List<RangeMap> createMapping(String sentence) {
+    protected static List<RangeMap> createMapping(String sentence)
+    {
         List<RangeMap> mapping = new LinkedList<RangeMap>();
         Matcher whitespace_matcher = whitespace_pattern.matcher(sentence);
         DeltaRangeMap delta_rmap = null;
@@ -216,22 +239,21 @@ public class StanfordParser {
 
     /**
      * Maps Tree node offsets using provided mapping.
-     *
-     * @param tree    the Tree whose begin and end extents should be mapped.
+     * @param tree the Tree whose begin and end extents should be mapped.
      * @param mapping the list of RangeMap objects which defines the mapping.
      */
-    protected static void mapOffsets(Tree tree, List<RangeMap> mapping) {
+    protected static void mapOffsets(Tree tree, List<RangeMap> mapping)
+    {
         // if mapping is empty, then assume 1-to-1 mapping.
         if (mapping == null || mapping.size() == 0) return;
 
         int begin_map_index = 0;
         RangeMap begin_rmap = mapping.get(begin_map_index);
-        TREE:
-        for (Tree t : tree) {
+        TREE: for (Tree t : tree) {
             if (t.isLeaf()) continue;
             MapLabel label = (MapLabel) t.label();
             int begin = (Integer) label.get(BEGIN_KEY);
-            // "end" must be index of last char in range
+            // "end" must be index of last char in range            
             int end = (Integer) label.get(END_KEY) - 1;
 
             // find the first rangemap whose end is greater than the
@@ -267,8 +289,7 @@ public class StanfordParser {
             // annotation.end");
             int end_map_index = begin_map_index;
             RangeMap end_rmap = begin_rmap;
-            END_OFFSET:
-            while (end_rmap.end <= end) {
+            END_OFFSET: while (end_rmap.end <= end) {
                 end_map_index++;
                 if (end_map_index >= mapping.size()) break END_OFFSET;
                 end_rmap = mapping.get(end_map_index);
@@ -286,28 +307,7 @@ public class StanfordParser {
             label.put(END_KEY, new_end + 1);
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.out.println("USAGE: StanfordParser <inputSentencesFile>");
-            System.out.println("Output stored in: <inputSentencesFile>.parses");
-            System.exit(0);
-        }
-        StanfordParser.initialize();
-        List<String> sentences = new ArrayList<String>();
-        BufferedReader in = new BufferedReader(new FileReader(args[0]));
-        BufferedWriter out = new BufferedWriter(new FileWriter(args[0] + ".parses"));
-        String sentence;
-        while ((sentence = in.readLine()) != null) {
-            sentences.add(sentence);
-        }
-        for (String s : sentences) {
-            out.append(StanfordParser.parse(s) + "\n");
-        }
-        out.close();
-        in.close();
-    }
-
+    
 //  private static void printOffsets(String sentence, Tree tree)
 //  {
 //      if (tree.isLeaf()) return;
@@ -325,28 +325,26 @@ public class StanfordParser {
 //      for (Tree child : tree.children())
 //          printOffsets(sentence, child);
 //  }
-
-    protected static class MutableInteger {
-        public int value;
-
-        public MutableInteger() {
-            value = 0;
+    
+    public static void main(String[] args) throws Exception
+    {
+        if (args.length != 1) {
+            System.out.println("USAGE: StanfordParser <inputSentencesFile>");
+            System.out.println("Output stored in: <inputSentencesFile>.parses");
+            System.exit(0);
         }
-
-        public MutableInteger(int i) {
-            value = i;
+        StanfordParser.initialize();
+        List<String> sentences = new ArrayList<String> ();
+        BufferedReader in = new BufferedReader(new FileReader(args[0]));
+        BufferedWriter out = new BufferedWriter(new FileWriter(args[0]+".parses"));
+        String sentence;
+        while ((sentence = in.readLine()) != null) {
+            sentences.add(sentence);
         }
-
-        public String toString() {
-            return Integer.toString(value);
+        for (String s : sentences) {
+            out.append(StanfordParser.parse(s)+"\n");
         }
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int i) {
-            value = i;
-        }
+        out.close();
+        in.close();
     }
 }

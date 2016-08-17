@@ -16,60 +16,54 @@ import java.util.HashSet;
 /**
  * <p>The <code>PredicateG</code> query generator creates queries from the
  * predicates in the question string.</p>
- *
+ * 
  * <p>This class extends the class <code>QueryGenerator</code>.</p>
- *
+ * 
  * @author Nico Schlaefer
  * @version 2007-07-11
  */
 public class PredicateG extends QueryGenerator {
-    /**
-     * Score assigned to queries created from predicates.
-     */
-    private static final float SCORE = 2;
-    /**
-     * Words that should not be part of a query string.
-     */
-    private static final String IGNORE = "(names?|give|tell|list)";
-    /**
-     * Answer extraction techniques for this query type.
-     */
-    private static final String[] EXTRACTION_TECHNIQUES = {
-            AnswerTypeFilter.ID,
-            AnswerPatternFilter.ID,
-            FactoidsFromPredicatesFilter.ID
-    };
-
-    /**
-     * Forms a query string from the predicates, terms and individual keywords.
-     *
-     * @param predicates predicates in the question
-     * @param terms      terms in the question
-     * @param kws        keywords in the question
-     * @return query string
-     */
-    public String getQueryString(Predicate[] predicates, Term[] terms,
-                                 String[] kws) {
-        ArrayList<String> phraseL = new ArrayList<String>();
-        HashSet<String> normSet = new HashSet<String>();
-
-        // get predicate verbs and arguments
-        for (Predicate predicate : predicates) {
-            String[] verbArgs = predicate.getVerbArgs();
-            for (String verbArg : verbArgs) {
-                String[] parts = verbArg.split("\t");
-                for (String part : parts)
-                    if (!part.matches("(?i)" + IGNORE) &&  // no words in IGNORE
-                            !FunctionWords.lookup(part) &&  // no function words
-                            normSet.add(StringUtils.normalize(part))) {
-                        // drop quotation marks
-                        String noQuotes = part.replace("\"", "");
-                        // add quotation marks for compound phrases
-                        if (noQuotes.matches(".*?\\s.*+"))
-                            noQuotes = "\"" + noQuotes + "\"";
-
-                        String phrase = noQuotes;
-
+	/** Score assigned to queries created from predicates. */
+	private static final float SCORE = 2;
+	/** Words that should not be part of a query string. */
+	private static final String IGNORE = "(names?|give|tell|list)";
+	/** Answer extraction techniques for this query type. */
+	private static final String[] EXTRACTION_TECHNIQUES = {
+		AnswerTypeFilter.ID,
+		AnswerPatternFilter.ID,
+		FactoidsFromPredicatesFilter.ID
+	};
+	
+	/**
+	 * Forms a query string from the predicates, terms and individual keywords.
+	 * 
+	 * @param predicates predicates in the question
+	 * @param terms terms in the question
+	 * @param kws keywords in the question
+	 * @return query string
+	 */
+	public String getQueryString(Predicate[] predicates, Term[] terms,
+			String[] kws) {
+		ArrayList<String> phraseL = new ArrayList<String>();
+		HashSet<String> normSet = new HashSet<String>();
+		
+		// get predicate verbs and arguments
+		for (Predicate predicate : predicates) {
+			String[] verbArgs = predicate.getVerbArgs();
+			for (String verbArg : verbArgs) {
+				String[] parts = verbArg.split("\t");
+				for (String part : parts)
+					if (!part.matches("(?i)" + IGNORE) &&  // no words in IGNORE
+							!FunctionWords.lookup(part) &&  // no function words
+							normSet.add(StringUtils.normalize(part))) {
+						// drop quotation marks
+						String noQuotes = part.replace("\"", "");
+						// add quotation marks for compound phrases
+						if (noQuotes.matches(".*?\\s.*+"))
+							noQuotes = "\"" + noQuotes + "\"";
+						
+						String phrase = noQuotes;
+						
 //						// append expansions
 //						Map<String, Double> expMap =
 //							TermExpander.expandPhrase(part, terms);
@@ -88,13 +82,13 @@ public class PredicateG extends QueryGenerator {
 //							}
 //							phrase += ")";
 //						}
+						
+						phraseL.add(phrase);
+					}
+			}
+		}
 
-                        phraseL.add(phrase);
-                    }
-            }
-        }
-
-        // get terms
+		// get terms
 //		for (Term term : terms) {
 //			String text = term.getText();
 //			if (normSet.add(StringUtils.normalize(text))) {
@@ -124,9 +118,9 @@ public class PredicateG extends QueryGenerator {
 //				phraseL.add(phrase);
 //			}
 //		}
-
-        // get individual keywords
-        // - expand keywords (not supported by Web search engines!)
+		
+		// get individual keywords
+		// - expand keywords (not supported by Web search engines!)
 //		for (Term term : terms) {
 //			String phrase;
 //			Map<String, Double> expMap = term.getExpansions();
@@ -182,45 +176,45 @@ public class PredicateG extends QueryGenerator {
 //			// term query
 //			if (newKeyword) phraseL.add(phrase);
 //		}
-        // - do not expand keywords
+		// - do not expand keywords
 //		for (String kw : kws)
 //			if (normSet.add(StringUtils.normalize(kw)))
 //				phraseL.add(kw);
-
-        // build query string
-        String[] phrases = phraseL.toArray(new String[phraseL.size()]);
-        String queryString = StringUtils.concatWithSpaces(phrases);
-
-        // include context keywords in the query string
-        for (String kw : kws)
-            if (!StringUtils.equalsCommonNorm(queryString, kw))
-                queryString += " " + kw;
-
-        return queryString;
-    }
-
-    /**
-     * Generates queries from predicate-argument structures extracted from the
-     * question string.
-     *
-     * @param aq analyzed question
-     * @return <code>Query</code> objects
-     */
-    public Query[] generateQueries(AnalyzedQuestion aq) {
-        // only generate a query if predicates could be extracted
-        Predicate[] ps = aq.getPredicates();
-        if (ps.length == 0) return new Query[0];
-
-        // create query string
-        Term[] terms = aq.getTerms();
-        String[] kws = aq.getKeywords();
-        String queryString = getQueryString(ps, terms, kws);
-
-        // create query, set answer types and predicates
-        Query[] queries = new Query[1];
-        queries[0] = new Query(queryString, aq, SCORE);
-        queries[0].setExtractionTechniques(EXTRACTION_TECHNIQUES);
-
-        return queries;
-    }
+		
+		// build query string
+		String[] phrases = phraseL.toArray(new String[phraseL.size()]);
+		String queryString = StringUtils.concatWithSpaces(phrases);
+		
+		// include context keywords in the query string
+		for (String kw : kws)
+			if (!StringUtils.equalsCommonNorm(queryString, kw))
+				queryString += " " + kw;
+		
+		return queryString;
+	}
+	
+	/**
+	 * Generates queries from predicate-argument structures extracted from the
+	 * question string.
+	 * 
+	 * @param aq analyzed question
+	 * @return <code>Query</code> objects
+	 */
+	public Query[] generateQueries(AnalyzedQuestion aq) {
+		// only generate a query if predicates could be extracted
+		Predicate[] ps = aq.getPredicates();
+		if (ps.length == 0) return new Query[0];
+		
+		// create query string
+		Term[] terms = aq.getTerms();
+		String[] kws = aq.getKeywords();
+		String queryString = getQueryString(ps, terms, kws);
+		
+		// create query, set answer types and predicates
+		Query[] queries = new Query[1];
+		queries[0] = new Query(queryString, aq, SCORE);
+		queries[0].setExtractionTechniques(EXTRACTION_TECHNIQUES);
+		
+		return queries;
+	}
 }

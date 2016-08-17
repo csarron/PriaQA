@@ -3,13 +3,13 @@ package info.ephyra.questionanalysis.atype.extractor;
 import info.ephyra.questionanalysis.atype.minorthird.hierarchical.HierarchicalClassifier;
 import info.ephyra.util.Properties;
 
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import edu.cmu.lti.javelin.qa.Term;
 import edu.cmu.lti.javelin.util.FileUtil;
@@ -20,46 +20,46 @@ import edu.cmu.minorthird.classify.Feature;
 import edu.cmu.minorthird.classify.Instance;
 
 /**
- * A feature extractor for question classification.  The most important
+ * A feature extractor for question classification.  The most important 
  * functionality is provided by the {@link #createInstance(List, String) createInstance}
  * method (a couple convenience versions also provided) which create
- * an edu.cmu.minorthird.classify.Instance object from basic question data
- * (the original question and its syntactic parse tree).
- *
- * createInstance can be used to extraction features for run-time classification
- * feature extraction.  It is also used
+ * an edu.cmu.minorthird.classify.Instance object from basic question data 
+ * (the original question and its syntactic parse tree). 
+ * 
+ * createInstance can be used to extraction features for run-time classification 
+ * feature extraction.  It is also used 
  * when loading edu.cmu.minorthird.classify.Example objects from a dataset
- * file at training time (see  {@link #loadFile(String) loadFile} and
+ * file at training time (see  {@link #loadFile(String) loadFile} and 
  * {@link #createExample(String) createExample}).  Thus, feature extraction for classification
  * is accomplished by the same code for both training and run-time classification.
- *
- * An important thing for subclassing classes to note is that the Instance returned
- * by a createInstance(...) method must have the original question, as
+ * 
+ * An important thing for subclassing classes to note is that the Instance returned 
+ * by a createInstance(...) method must have the original question, as 
  * a String, as it's source.
- *
+ * 
  * @author Justin Betteridge
  * @version 2008-02-10
  */
-public abstract class FeatureExtractor {
+public abstract class FeatureExtractor{
 
     private static final Logger log = Logger.getLogger(FeatureExtractor.class);
 
     protected static String SPACE_PTRN = "\\s+";
-
+    
     /**
-     * Regular expression describing the format of a line in a question classification dataset.
+     * Regular expression describing the format of a line in a question classification dataset.  
      * The answer type label, the actual question, and the syntactic parse tree are the fields
      * that must be captured by groups, with the group indices specified by {@link #labelPosition},
-     * {@link #questionPosition}, and {@link #parsePosition}, respectively.
+     * {@link #questionPosition}, and {@link #parsePosition}, respectively. 
      */
     protected Pattern datasetExamplePattern = Pattern.compile(
-            "^(\\S+)\\s+" + // answer type
-                    "\\S+:\\s+" + // question id
-                    "(?:.+?;\\s+)?" + // topic (optional)
-                    "(.+)[\\?\\.]?\\s+" + // question
-                    "(\\(ROOT.+\\))\\s*$" + // parse tree
-                    ""
-            , Pattern.MULTILINE);
+            "^(\\S+)\\s+"+ // answer type
+            "\\S+:\\s+"+ // question id
+            "(?:.+?;\\s+)?"+ // topic (optional)
+            "(.+)[\\?\\.]?\\s+"+ // question
+            "(\\(ROOT.+\\))\\s*$"+ // parse tree
+            ""
+            ,Pattern.MULTILINE);
 
     /**
      * The captured group index of the answer type label in the dataset line Pattern.
@@ -81,6 +81,8 @@ public abstract class FeatureExtractor {
 
     /**
      * Reads in properties from this class's properties file and sets class data members.
+     * 
+     * @throws Exception
      */
     public void initialize() throws Exception {
         Properties properties = Properties.loadFromClassName(FeatureExtractor.class.getName());
@@ -89,7 +91,7 @@ public abstract class FeatureExtractor {
         if (classLevelsProp == null)
             throw new RuntimeException("Required parameter classLevels is undefined");
         classLevels = Integer.parseInt(classLevelsProp);
-
+        
         String useClassLevelsProp = properties.getProperty("useClassLevels");
         if (useClassLevelsProp == null)
             throw new RuntimeException("Required parameter useClassLevels is undefined");
@@ -97,11 +99,11 @@ public abstract class FeatureExtractor {
     }
 
     /**
-     * Given a question as a list of Terms and it's syntactic parse tree,
-     * creates a Instance for question classification by extracting the
+     * Given a question as a list of Terms and it's syntactic parse tree, 
+     * creates a Instance for question classification by extracting the 
      * appropriate features.
-     *
-     * @param terms     the Terms of the question
+     * 
+     * @param terms the Terms of the question
      * @param parseTree the syntactic parse tree of the question
      * @return an Instance which can be used for question classification
      */
@@ -110,60 +112,62 @@ public abstract class FeatureExtractor {
     /**
      * Convenience method that tokenizes the given question by whitespace, creates
      * Terms, and calls {@link #createInstance(List, String)}.
-     *
-     * @param question  the question to create an Instance from
+     * 
+     * @param question the question to create an Instance from
      * @param parseTree the syntactic parse tree of the question
      */
-    public Instance createInstance(String question, String parseTree) {
+    public Instance createInstance(String question, String parseTree){
         String[] tokens = question.split("\\s+");
         List<Term> terms = new ArrayList<Term>();
         for (String token : tokens) {
-            terms.add(new Term(0, 0, token));
+            terms.add(new Term(0,0,token));
         }
-        return createInstance(terms, parseTree);
+        return createInstance(terms,parseTree);
     }
 
     /**
      * Creates an Instance for question classification when nothing but the
-     * original question is available for feature extraction. Assumes words
+     * original question is available for feature extraction. Assumes words 
      * in the input question are separated by white-space.
-     *
+     * 
      * @param question the input question
-     * @return the Instance object
+     * @return the Instance object 
      */
     public abstract Instance createInstance(String question);
 
     /**
      * Creates an edu.cmu.minorthird.classify.Example object from one line
      * of a dataset file using {@link #createInstance(String, String)}.
-     *
-     * @param datasetLine the line from the dataset file from which to create the Example
+     * 
+     * @param datasetLine the line from the dataset file from which to create
+     * the Example 
      * @return the Example created
+     * @throws Exception
      */
     public Example[] createExample(String datasetLine) throws Exception {
-        Matcher m = datasetExamplePattern.matcher(datasetLine);
+        Matcher m=datasetExamplePattern.matcher(datasetLine);
 
-        if (!m.matches())
-            throw new Exception("Malformed dataset line:\n" + datasetLine);
+        if (!m.matches()) 
+            throw new Exception("Malformed dataset line:\n"+datasetLine);
 
         String[] aTypes = null;
 
         aTypes = m.group(labelPosition)
-                .replaceAll(",$", "")
-                .replaceAll(",", ".")
-                .split("\\|");
+                    .replaceAll(",$", "")   
+                    .replaceAll(",", ".")
+                    .split("\\|");
         String question = m.group(questionPosition);
         String sentParse = null;
         if (parsePosition > -1) sentParse = m.group(parsePosition);
 
-        Instance instance = createInstance(question, sentParse);
+        Instance instance = createInstance(question,sentParse);
 
         Example[] result = new Example[aTypes.length];
 
         //create example(s) and add it to list
-        for (int i = 0; i < aTypes.length; i++) {
-            String newATypeName = HierarchicalClassifier.getHierarchicalClassName(aTypes[i], classLevels, useClassLevels);
-            result[i] = new Example(instance, new ClassLabel(newATypeName));
+        for(int i=0;i<aTypes.length;i++){
+            String newATypeName=HierarchicalClassifier.getHierarchicalClassName(aTypes[i],classLevels,useClassLevels);
+            result[i] = new Example(instance,new ClassLabel(newATypeName));
         }
         return result;
     }
@@ -172,12 +176,12 @@ public abstract class FeatureExtractor {
      * Loads an array of edu.cmu.minorthird.classify.Example objects from the file
      * at the given location, using {@link #datasetExamplePattern} and
      * {@link #createExample(String) createExample}.
-     *
+     * 
      * @param fileName the name of the dataset file
      */
     public Example[] loadFile(String fileName) {
         List<Example> examples = new ArrayList<Example>();
-        String data = FileUtil.readFile(fileName, "UTF-8");
+        String data=FileUtil.readFile(fileName,"UTF-8");
         Matcher m = datasetExamplePattern.matcher(data);
         while (m.find()) {
             try {
@@ -187,68 +191,70 @@ public abstract class FeatureExtractor {
                     numLoaded++;
                 }
             } catch (Exception e) {
-                log.error("Error reading Example from file: ", e);
+                log.error("Error reading Example from file: ",e);
             }
         }
-        return (Example[]) examples.toArray(new Example[examples.size()]);
+        return (Example[])examples.toArray(new Example[examples.size()]);
     }
-
+    
 
     /**
      * Prints the features generated for each example in an input file.  If feature
-     * types are included as command-line arguments, only those types are printed.
+     * types are included as command-line arguments, only those types are printed. 
      * Otherwise, all features are printed.
-     *
+     * 
      * @param dataSetFileName the name of the file containing the dataset to load
-     * @param features        a List of the features to print
+     * @param features a List of the features to print
      */
-    public void printFeatures(String dataSetFileName, List<String> features) {
-        Example[] examples = loadFile(dataSetFileName);
+    public void printFeatures (String dataSetFileName, List<String> features) {
+        Example[] examples=loadFile(dataSetFileName);
 
-        for (int i = 0; i < examples.length; i++) {
-            String src = (String) examples[i].getSource();
+        for(int i=0;i<examples.length;i++){
+            String src = (String)examples[i].getSource();
             StringBuilder sb = new StringBuilder();
             if (features.size() > 0) {
-                for (Iterator it = examples[i].binaryFeatureIterator(); it.hasNext(); ) {
-                    Feature feat = (Feature) it.next();
+                for(Iterator it = examples[i].binaryFeatureIterator(); it.hasNext();) {
+                    Feature feat = (Feature)it.next();
                     String name = "";
-                    for (String s : feat.getName()) name += "." + s;
-                    name = name.replaceFirst(".", "");
+                    for (String s : feat.getName()) name += "."+s;
+                    name = name.replaceFirst(".","");
                     if (features.contains(feat.getName()[0]))
-                        sb.append(name + "  ");
+                        sb.append(name+"  ");
                 }
                 System.out.println(sb.toString() + " " + src);
-            } else System.out.println(examples[i] + " " + src);
+            }
+            else System.out.println(examples[i] + " " + src);
         }
 
-        System.out.println("Loaded: " + getNumLoaded());
+        System.out.println("Loaded: "+getNumLoaded());
     }
 
     /**
      * Prints the features generated for each example in an input file.  If feature
-     * types are included as command-line arguments, only those types are printed.
+     * types are included as command-line arguments, only those types are printed. 
      * Otherwise, all features are printed.
-     *
+     * 
      * @param questionSetFileName the name of the file containing the dataset to load
-     * @param features            a List of the features to print
+     * @param features a List of the features to print
      */
-    public void printFeaturesFromQuestions(String questionSetFileName, List<String> features) {
+    public void printFeaturesFromQuestions (String questionSetFileName, List<String> features) {
         String questions = IOUtil.readFile(questionSetFileName);
-
+        
         for (String question : questions.split("[\\n\\r\\f]")) {
             Instance instance = createInstance(question);
             StringBuilder sb = new StringBuilder();
             if (features.size() > 0) {
-                for (Iterator it = instance.binaryFeatureIterator(); it.hasNext(); ) {
-                    Feature feat = (Feature) it.next();
+                for(Iterator it = instance.binaryFeatureIterator(); it.hasNext();) {
+                    Feature feat = (Feature)it.next();
                     String name = "";
-                    for (String s : feat.getName()) name += "." + s;
-                    name = name.replaceFirst(".", "");
+                    for (String s : feat.getName()) name += "."+s;
+                    name = name.replaceFirst(".","");
                     if (features.contains(feat.getName()[0]))
-                        sb.append(name + "  ");
+                        sb.append(name+"  ");
                 }
                 System.out.println(sb.toString() + " " + question);
-            } else System.out.println(instance + " " + question);
+            }
+            else System.out.println(instance + " " + question);
         }
     }
 
@@ -269,23 +275,24 @@ public abstract class FeatureExtractor {
     /**
      * @return the number of examples loaded
      */
-    public int getNumLoaded() {
+    public int getNumLoaded(){
         return numLoaded;
     }
 
-    public int getClassLevels() {
+
+    public void setClassLevels(int classLevels){
+        this.classLevels=classLevels;
+    }
+
+    public int getClassLevels(){
         return classLevels;
     }
 
-    public void setClassLevels(int classLevels) {
-        this.classLevels = classLevels;
+    public void setUseClassLevels(boolean useClassLevels){
+        this.useClassLevels=useClassLevels;
     }
 
-    public void setUseClassLevels(boolean useClassLevels) {
-        this.useClassLevels = useClassLevels;
-    }
-
-    public boolean isUsingClassLevels() {
+    public boolean isUsingClassLevels(){
         return useClassLevels;
     }
 

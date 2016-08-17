@@ -10,35 +10,34 @@ import edu.cmu.lti.javelin.util.Language;
 
 /**
  * Creates a feature extractor for a specific language.
- *
+ * 
  * @author Justin Betteridge
  * @version 2008-02-10
  */
 public class FeatureExtractorFactory {
-    private static Map<String, Properties> propertyMap;
-
+    private static Map<String,Properties> propertyMap;
+    
     static {
         Properties properties = Properties.loadFromClassName(FeatureExtractorFactory.class.getName());
         propertyMap = properties.mapProperties();
     }
-
+    
     public static FeatureExtractor getInstance(Language language) throws Exception {
         FeatureExtractor extractor = null;
         Properties properties = propertyMap.get(language.toString());
         String extractorType = properties.getProperty("extractorType");
-        if (extractorType == null)
-            throw new Exception("Required property extractorType is undefined for language" + language);
-        extractor = (FeatureExtractor) Class.forName(extractorType).newInstance();
+        if (extractorType == null) 
+            throw new Exception("Required property extractorType is undefined for language"+language);
+        extractor = (FeatureExtractor)Class.forName(extractorType).newInstance();
         extractor.initialize();
         return extractor;
     }
 
     /**
-     * Invokes {@link info.ephyra.questionanalysis.atype.extractor.FeatureExtractor#printFeatures}
-     * with feature names specified on the command line.
-     *
-     * @param args command-line arguments: "&lt;Language&gt; &lt;datasetFile&gt; [&lt;feature1&gt;
-     *             &lt;feature2&gt; ...]"
+     * Invokes {@link info.ephyra.questionanalysis.atype.extractor.FeatureExtractor#printFeatures} with feature names specified on the command line.
+     * 
+     * @param args command-line arguments: "&lt;Language&gt; &lt;datasetFile&gt; [&lt;feature1&gt; &lt;feature2&gt; ...]" 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -61,13 +60,13 @@ public class FeatureExtractorFactory {
             parses = true;
             fileInd = 2;
         }
-
-        for (int i = fileInd + 1; i <= args.length - 1; i++)
+        
+        for (int i=fileInd+1; i <= args.length-1; i++) 
             features.add(args[i]);
-
+        
         if (parses)
             extractor.printFeatures(args[fileInd], features);
-        else
+        else 
             extractor.printFeaturesFromQuestions(args[fileInd], features);
     }
 
