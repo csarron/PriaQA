@@ -4,6 +4,7 @@ import info.ephyra.io.MsgPrinter;
 import info.ephyra.search.Result;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -211,10 +212,13 @@ public class IndriKM extends KnowledgeMiner {
 			}
 		    
 		    // run an Indri query, returning up to MAX_RESULTS_PERQUERY results
-		    ScoredExtentResult[] results =
+			MsgPrinter.printStatusMsg("3.2.1 Searching...query string: "+ query.getQueryString());
+            MsgPrinter.printStatusMsg("3.2.1 Searching...transformed query string: "+ transformQueryString(query.getQueryString()));
+
+            ScoredExtentResult[] results =
 		    	env.runQuery(transformQueryString(query.getQueryString()),
 		    				 MAX_RESULTS_PERQUERY);
-			
+			MsgPrinter.printStatusMsg("3.2.1 Getting answers....searching...result len: "+ results.length);
 			// get passages and document numbers
 			String[] passages = new String[results.length];
 			for (int i = 0; i < results.length; i += MAX_DOCS) {
@@ -250,7 +254,7 @@ public class IndriKM extends KnowledgeMiner {
 				}
 			}
 			String[] docNos = env.documentMetadata(results, "docno");
-		    
+		    System.out.println("searching results docNos=========>>>>>:"+ Arrays.toString(docNos));
 		    // close query environment
 		    env.close();
 			

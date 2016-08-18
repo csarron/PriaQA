@@ -1,10 +1,26 @@
 package info.ephyra;
 
 import info.ephyra.answerselection.AnswerSelection;
-import info.ephyra.answerselection.filters.*;
+import info.ephyra.answerselection.filters.AnswerPatternFilter;
+import info.ephyra.answerselection.filters.AnswerTypeFilter;
+import info.ephyra.answerselection.filters.DuplicateFilter;
+import info.ephyra.answerselection.filters.FactoidSubsetFilter;
+import info.ephyra.answerselection.filters.FactoidsFromPredicatesFilter;
+import info.ephyra.answerselection.filters.PredicateExtractionFilter;
+import info.ephyra.answerselection.filters.QuestionKeywordsFilter;
+import info.ephyra.answerselection.filters.ScoreCombinationFilter;
+import info.ephyra.answerselection.filters.ScoreNormalizationFilter;
+import info.ephyra.answerselection.filters.ScoreSorterFilter;
+import info.ephyra.answerselection.filters.StopwordFilter;
+import info.ephyra.answerselection.filters.TruncationFilter;
 import info.ephyra.io.Logger;
 import info.ephyra.io.MsgPrinter;
-import info.ephyra.nlp.*;
+import info.ephyra.nlp.LingPipe;
+import info.ephyra.nlp.NETagger;
+import info.ephyra.nlp.OpenNLP;
+import info.ephyra.nlp.SnowballStemmer;
+import info.ephyra.nlp.StanfordNeTagger;
+import info.ephyra.nlp.StanfordParser;
 import info.ephyra.nlp.indices.FunctionWords;
 import info.ephyra.nlp.indices.IrregularVerbs;
 import info.ephyra.nlp.indices.Prepositions;
@@ -13,7 +29,11 @@ import info.ephyra.nlp.semantics.ontologies.Ontology;
 import info.ephyra.nlp.semantics.ontologies.WordNet;
 import info.ephyra.querygeneration.Query;
 import info.ephyra.querygeneration.QueryGeneration;
-import info.ephyra.querygeneration.generators.*;
+import info.ephyra.querygeneration.generators.BagOfTermsG;
+import info.ephyra.querygeneration.generators.BagOfWordsG;
+import info.ephyra.querygeneration.generators.PredicateG;
+import info.ephyra.querygeneration.generators.QuestionInterpretationG;
+import info.ephyra.querygeneration.generators.QuestionReformulationG;
 import info.ephyra.questionanalysis.AnalyzedQuestion;
 import info.ephyra.questionanalysis.QuestionAnalysis;
 import info.ephyra.questionanalysis.QuestionInterpreter;
@@ -21,6 +41,7 @@ import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
 import info.ephyra.search.searchers.IndriKM;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -28,13 +49,14 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * <code>OpenEphyra</code> is an open framework for question answering (QA).
@@ -43,7 +65,7 @@ import java.util.ArrayList;
  * @version 2008-03-23
  */
 public class OpenEphyraServer extends AbstractHandler {
-    public static long timestamp = 0;
+//    public static long timestamp = 0;
     /**
      * Factoid question type.
      */
@@ -170,7 +192,7 @@ public class OpenEphyraServer extends AbstractHandler {
         Logger.setLogfile("log/OpenEphyra");
         Logger.enableLogging(true);
 
-        timestamp = System.currentTimeMillis();
+//        timestamp = System.currentTimeMillis();
 
         String addr = "localhost";
         int port = 8080;
@@ -418,7 +440,7 @@ public class OpenEphyraServer extends AbstractHandler {
      */
     public Result[] askFactoid(String question, int maxAnswers,
                                float absThresh) {
-        timestamp = System.currentTimeMillis();
+//        timestamp = System.currentTimeMillis();
         // initialize pipeline
         MsgPrinter.printStatusMsg("1. Initializing pipeline....");
         initFactoid();

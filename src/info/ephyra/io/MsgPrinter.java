@@ -1,6 +1,5 @@
 package info.ephyra.io;
 
-import info.ephyra.OpenEphyraServer;
 import info.ephyra.answerselection.filters.Filter;
 import info.ephyra.nlp.semantics.Predicate;
 import info.ephyra.querygeneration.Query;
@@ -54,7 +53,7 @@ public class MsgPrinter {
 	 * @param status a status message
 	 */
 	public static synchronized void printStatusMsg(String status) {
-		if (statusMsgs) printMessage("timestamp: "+ (System.currentTimeMillis() - OpenEphyraServer.timestamp)
+		if (statusMsgs) printMessage("timestamp: "+ (System.currentTimeMillis())
                 +" "+getTimestamp() + ": " + status);
 	}
 
