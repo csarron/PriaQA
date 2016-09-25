@@ -67,6 +67,15 @@ import javax.servlet.http.HttpServletResponse;
 public class OpenEphyraServer extends AbstractHandler {
 //    public static long timestamp = 0;
     /**
+     * Serialized classifier for score normalization.
+     */
+    public static final String NORMALIZER =
+            "res/scorenormalization/classifiers/" +
+                    "AdaBoost70_" +
+                    "Score+Extractors_" +
+                    "TREC10+TREC11+TREC12+TREC13+TREC14+TREC15+TREC8+TREC9" +
+                    ".serialized";
+    /**
      * Factoid question type.
      */
     protected static final String FACTOID = "FACTOID";
@@ -74,7 +83,6 @@ public class OpenEphyraServer extends AbstractHandler {
      * List question type.
      */
     protected static final String LIST = "LIST";
-
     /**
      * Maximum number of factoid answers.
      */
@@ -87,135 +95,11 @@ public class OpenEphyraServer extends AbstractHandler {
      * Relative threshold for list answer scores (fraction of top score).
      */
     protected static final float LIST_REL_THRESH = 0.1f;
-
-    /**
-     * Serialized classifier for score normalization.
-     */
-    public static final String NORMALIZER =
-            "res/scorenormalization/classifiers/" +
-                    "AdaBoost70_" +
-                    "Score+Extractors_" +
-                    "TREC10+TREC11+TREC12+TREC13+TREC14+TREC15+TREC8+TREC9" +
-                    ".serialized";
-
     /**
      * The directory of Ephyra, required when Ephyra is used as an API.
      */
     protected String dir;
 
-
-    @Override
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response)
-            throws IOException, ServletException {
-
-        String query_str = request.getQueryString();
-
-        System.out.println("Query str: " + query_str);
-
-        if (query_str == null) {
-            response.setContentType("text/html;charset=utf-8");
-            response.setStatus(HttpServletResponse.SC_OK);
-            baseRequest.setHandled(true);
-            return;
-        }
-
-        String[] tokens = query_str.split("=");
-        String question = URLDecoder.decode(tokens[1], "UTF-8");
-
-        // response
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
-
-        PrintWriter out = response.getWriter();
-        out.flush();
-
-        // determine question type and extract question string
-        String type;
-        if (question.matches("(?i)" + FACTOID + ":.*+")) {
-            // factoid question
-            type = FACTOID;
-            question = question.split(":", 2)[1].trim();
-        } else if (question.matches("(?i)" + LIST + ":.*+")) {
-            // list question
-            type = LIST;
-            question = question.split(":", 2)[1].trim();
-        } else {
-            // question type unspecified
-            type = FACTOID;  // default type
-        }
-
-        // ask question
-        Result[] results = new Result[0];
-        if (type.equals(FACTOID)) {
-            Logger.logFactoidStart(question);
-            results = askFactoid(question, FACTOID_MAX_ANSWERS,
-                    FACTOID_ABS_THRESH);
-            Logger.logResults(results);
-            Logger.logFactoidEnd();
-        } else if (type.equals(LIST)) {
-            Logger.logListStart(question);
-            results = askList(question, LIST_REL_THRESH);
-            Logger.logResults(results);
-            Logger.logListEnd();
-        }
-
-        if (results.length > 0) {
-            String answer = results[0].getAnswer();
-            if (answer != null)
-                out.println(answer);
-            else
-                out.println("Sorry, I cannot answer your question.");
-
-        } else {
-            out.println("Sorry, there is no result for your question.");
-        }
-
-
-        out.close();
-    }
-
-    /**
-     * Entry point of Ephyra. Initializes the engine and starts the web service interface.
-     *
-     * @param args command line arguments are ignored
-     */
-    public static void main(String[] args) throws Exception {
-        // enable output of status and error messages
-        MsgPrinter.enableStatusMsgs(true);
-        MsgPrinter.enableErrorMsgs(true);
-
-        // set log file and enable logging
-        Logger.setLogfile("log/OpenEphyra");
-        Logger.enableLogging(true);
-
-//        timestamp = System.currentTimeMillis();
-
-        String addr = "localhost";
-        int port = 8080;
-        if (args.length > 1) {
-            addr = args[0];
-            port = Integer.parseInt(args[1]);
-        }
-        int NTHREADS = Integer.parseInt(System.getenv("THREADS"));
-
-        Server server = new Server();
-        SelectChannelConnector con1 = new SelectChannelConnector();
-        con1.setHost(addr);
-        con1.setPort(port);
-        con1.setThreadPool(new QueuedThreadPool(NTHREADS));
-        con1.setMaxIdleTime(30000);
-        con1.setRequestHeaderSize(8192);
-
-        server.setConnectors(new Connector[]{con1});
-        server.setHandler(new OpenEphyraServer());
-
-        server.start();
-        server.join();
-    }
 
     /**
      * <p>Creates a new instance of Ephyra and initializes the system.</p>
@@ -332,6 +216,118 @@ public class OpenEphyraServer extends AbstractHandler {
             MsgPrinter.printErrorMsg("Could not load answer patterns.");
     }
 
+    /**
+     * Entry point of Ephyra. Initializes the engine and starts the web service interface.
+     *
+     * @param args command line arguments are ignored
+     */
+    public static void main(String[] args) throws Exception {
+        // enable output of status and error messages
+        MsgPrinter.enableStatusMsgs(true);
+        MsgPrinter.enableErrorMsgs(true);
+
+        // set log file and enable logging
+        Logger.setLogfile("log/OpenEphyra");
+        Logger.enableLogging(true);
+
+//        timestamp = System.currentTimeMillis();
+
+        String addr = "localhost";
+        int port = 8080;
+        if (args.length > 1) {
+            addr = args[0];
+            port = Integer.parseInt(args[1]);
+        }
+        int NTHREADS = Integer.parseInt(System.getenv("THREADS"));
+
+        Server server = new Server();
+        SelectChannelConnector con1 = new SelectChannelConnector();
+        con1.setHost(addr);
+        con1.setPort(port);
+        con1.setThreadPool(new QueuedThreadPool(NTHREADS));
+        con1.setMaxIdleTime(30000);
+        con1.setRequestHeaderSize(8192);
+
+        server.setConnectors(new Connector[]{con1});
+        server.setHandler(new OpenEphyraServer());
+
+        server.start();
+        server.join();
+    }
+
+    @Override
+    public void handle(String target,
+                       Request baseRequest,
+                       HttpServletRequest request,
+                       HttpServletResponse response)
+            throws IOException, ServletException {
+
+        String query_str = request.getQueryString();
+
+        System.out.println("Query str: " + query_str);
+
+        if (query_str == null) {
+            response.setContentType("text/html;charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+            baseRequest.setHandled(true);
+            return;
+        }
+
+        String[] tokens = query_str.split("=");
+        String question = URLDecoder.decode(tokens[1], "UTF-8");
+
+        // response
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        baseRequest.setHandled(true);
+
+        PrintWriter out = response.getWriter();
+        out.flush();
+
+        // determine question type and extract question string
+        String type;
+        if (question.matches("(?i)" + FACTOID + ":.*+")) {
+            // factoid question
+            type = FACTOID;
+            question = question.split(":", 2)[1].trim();
+        } else if (question.matches("(?i)" + LIST + ":.*+")) {
+            // list question
+            type = LIST;
+            question = question.split(":", 2)[1].trim();
+        } else {
+            // question type unspecified
+            type = FACTOID;  // default type
+        }
+
+        // ask question
+        Result[] results = new Result[0];
+        if (type.equals(FACTOID)) {
+            Logger.logFactoidStart(question);
+            results = askFactoid(question, FACTOID_MAX_ANSWERS,
+                    FACTOID_ABS_THRESH);
+            Logger.logResults(results);
+            Logger.logFactoidEnd();
+        } else if (type.equals(LIST)) {
+            Logger.logListStart(question);
+            results = askList(question, LIST_REL_THRESH);
+            Logger.logResults(results);
+            Logger.logListEnd();
+        }
+
+        if (results.length > 0) {
+            String answer = results[0].getAnswer();
+            if (answer != null)
+                out.println(answer);
+            else
+                out.println("Sorry, I cannot answer your question.");
+
+        } else {
+            out.println("Sorry, there is no result for your question.");
+        }
+
+
+        out.close();
+    }
 
     /**
      * Initializes the pipeline for factoid questions.

@@ -24,14 +24,14 @@ import java.util.HashMap;
 /**
  * <p>A web term importance filter that counts term frequencies in a Wikipedia
  * article on the target of the question.</p>
- * 
+ *
  * <p>This class extends the class <code>WebTermImportanceFilter</code>.</p>
- * 
+ *
  * @author Guido Sautter
  * @version 2008-02-15
  */
 public class WikipediaTermImportanceFilter extends WebTermImportanceFilter {
-	
+
 //	protected static final String person = "person";
 //	protected static final String organization = "organization";
 //	protected static final String location = "location";
@@ -42,89 +42,102 @@ public class WikipediaTermImportanceFilter extends WebTermImportanceFilter {
 //	public static final int SQUARE_ROOT_LENGTH_NORMALIZATION = 2;
 //	public static final int LOG_LENGTH_NORMALIZATION = 3;
 //	public static final int LOG_10_LENGTH_NORMALIZATION = 4;
-	
+
 //	protected static final String WIKIPEDIA = "wikipedia";
-	
-	/**
-	 * @param normalizationMode
-	 * @param tfNormalizationMode
-	 * @param isCombined
-	 */
-	public WikipediaTermImportanceFilter(int normalizationMode, int tfNormalizationMode, boolean isCombined) {
-		super(normalizationMode, tfNormalizationMode, isCombined);
-	}
-	
-	/** @see info.ephyra.answerselection.filters.WebTermImportanceFilter#getTargets(java.lang.String)
-	 */
-	@Override
-	public String[] getTargets(String target) {
-		String[] targets = {target};
-		return targets;
-	}
-	
-	/** @see info.ephyra.answerselection.filters.WebTermImportanceFilter#getTermCounters(java.lang.String[])
-	 */
-	public HashMap<String, TermCounter> getTermCounters(String[] targets) {
-		if (targets.length == 0) return new HashMap<String, TermCounter>();
-		return this.getTermCounters(targets[0]);
-	}
-	
-	/**
-	 * fetch the term frequencies in the top X result snippets of a web search
-	 * for some target
-	 * 
-	 * @param target the target
-	 * @return a HashMap mapping the terms in the web search results to their
-	 *         frequency in the snippets
-	 */
-	public HashMap<String, TermCounter> getTermCounters(String target) {
-		HashMap<String, TermCounter> rawTermCounters = null;
-		try {
-			String url = "http://en.wikipedia.org/wiki/" + target.replaceAll("\\s", "_");
-			URLConnection connection = new URL(url).openConnection();
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
-			connection.setUseCaches(false);
-			connection.setRequestProperty("User-Agent", "Ephyra");
-			connection.connect();
-			
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			rawTermCounters = new HashMap<String, TermCounter>();
-			boolean inTag = false;
-			int c = 0;
-			StringBuffer term = new StringBuffer();
-			while ((c = reader.read()) != -1) {
-				if (c == '<') {
-					inTag = true;
-					if (term.length() != 0) {
-						String stemmedTerm = SnowballStemmer.stem(term.toString().toLowerCase());
-						System.out.println(stemmedTerm);
-						if (!rawTermCounters.containsKey(stemmedTerm))
-							rawTermCounters.put(stemmedTerm, new TermCounter());
-						rawTermCounters.get(stemmedTerm).increment(1);
-						term = new StringBuffer();
-					}
-				} else if (c == '>') {
-					inTag = false;
-				} else if (!inTag) {
-					if (c < 33) {
-						if (term.length() != 0) {
-							String stemmedTerm = SnowballStemmer.stem(term.toString().toLowerCase());
-							System.out.println(stemmedTerm);
-							if (!rawTermCounters.containsKey(stemmedTerm))
-								rawTermCounters.put(stemmedTerm, new TermCounter());
-							rawTermCounters.get(stemmedTerm).increment(1);
-							term = new StringBuffer();
-						}
-					} else term.append((char) c);
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return rawTermCounters;
-	}
-	
+
+    protected static boolean TEST_TERM_DOWMLOD = false;
+
+    /**
+     * @param normalizationMode
+     * @param tfNormalizationMode
+     * @param isCombined
+     */
+    public WikipediaTermImportanceFilter(int normalizationMode, int tfNormalizationMode, boolean isCombined) {
+        super(normalizationMode, tfNormalizationMode, isCombined);
+    }
+
+    public static void main(String[] args) {
+        TEST_TERM_DOWMLOD = true;
+
+        MsgPrinter.enableStatusMsgs(true);
+        MsgPrinter.enableErrorMsgs(true);
+
+        // create tokenizer
+        MsgPrinter.printStatusMsg("Creating tokenizer...");
+        if (!OpenNLP.createTokenizer("res/nlp/tokenizer/opennlp/EnglishTok.bin.gz"))
+            MsgPrinter.printErrorMsg("Could not create tokenizer.");
+//		LingPipe.createTokenizer();
+
+//		// create sentence detector
+//		MsgPrinter.printStatusMsg("Creating sentence detector...");
+//		if (!OpenNLP.createSentenceDetector("res/nlp/sentencedetector/opennlp/EnglishSD.bin.gz"))
+//			MsgPrinter.printErrorMsg("Could not create sentence detector.");
+//		LingPipe.createSentenceDetector();
+
+        // create stemmer
+        MsgPrinter.printStatusMsg("Creating stemmer...");
+        SnowballStemmer.create();
+
+//		// create part of speech tagger
+//		MsgPrinter.printStatusMsg("Creating POS tagger...");
+//		if (!OpenNLP.createPosTagger("res/nlp/postagger/opennlp/tag.bin.gz",
+//									 "res/nlp/postagger/opennlp/tagdict"))
+//			MsgPrinter.printErrorMsg("Could not create OpenNLP POS tagger.");
+//		if (!StanfordPosTagger.init("res/nlp/postagger/stanford/" +
+//				"train-wsj-0-18.holder"))
+//			MsgPrinter.printErrorMsg("Could not create Stanford POS tagger.");
+
+//		// create chunker
+//		MsgPrinter.printStatusMsg("Creating chunker...");
+//		if (!OpenNLP.createChunker("res/nlp/phrasechunker/opennlp/" +
+//								   "EnglishChunk.bin.gz"))
+//			MsgPrinter.printErrorMsg("Could not create chunker.");
+
+        // create named entity taggers
+        MsgPrinter.printStatusMsg("Creating NE taggers...");
+        NETagger.loadListTaggers("res/nlp/netagger/lists/");
+        NETagger.loadRegExTaggers("res/nlp/netagger/patterns.lst");
+        MsgPrinter.printStatusMsg("  ...loading models");
+//		if (!NETagger.loadNameFinders("res/nlp/netagger/opennlp/"))
+//			MsgPrinter.printErrorMsg("Could not create OpenNLP NE tagger.");
+//		if (!StanfordNeTagger.isInitialized() && !StanfordNeTagger.init())
+//			MsgPrinter.printErrorMsg("Could not create Stanford NE tagger.");
+        MsgPrinter.printStatusMsg("  ...done");
+
+        WikipediaTermImportanceFilter wtif = new WikipediaTermImportanceFilter(NO_NORMALIZATION, NO_NORMALIZATION, false);
+        TRECTarget[] targets = TREC13To16Parser.loadTargets(args[0]);
+        for (TRECTarget target : targets) {
+            String question = target.getTargetDesc();
+
+            // query generation
+            MsgPrinter.printGeneratingQueries();
+            String qn = QuestionNormalizer.normalize(question);
+            MsgPrinter.printNormalization(qn);  // print normalized question string
+            Logger.logNormalization(qn);  // log normalized question string
+            String[] kws = KeywordExtractor.getKeywords(qn);
+            AnalyzedQuestion aq = new AnalyzedQuestion(question);
+            aq.setKeywords(kws);
+            aq.setFactoid(false);
+
+            Query[] queries = new BagOfWordsG().generateQueries(aq);
+            for (int q = 0; q < queries.length; q++)
+                queries[q].setOriginalQueryString(question);
+
+            Result[] results = new Result[1];
+            results[0] = new Result("This would be the answer", queries[0]);
+            wtif.apply(results);
+        }
+    }
+
+    /**
+     * @see info.ephyra.answerselection.filters.WebTermImportanceFilter#getTargets(java.lang.String)
+     */
+    @Override
+    public String[] getTargets(String target) {
+        String[] targets = {target};
+        return targets;
+    }
+
 //	/**
 //	 * Increment the score of each result snippet for each word in it according
 //	 * to the number of top-100 web search engine snippets containing this
@@ -267,7 +280,7 @@ public class WikipediaTermImportanceFilter extends WebTermImportanceFilter {
 //		
 //		return resultList.toArray(new Result[resultList.size()]);
 //	}
-	
+
 //	private static String lastTarget = null;
 //	private static HashMap<String, TermCounter> lastTargetTermCounters = null;
 //	
@@ -287,79 +300,68 @@ public class WikipediaTermImportanceFilter extends WebTermImportanceFilter {
 //			return null;
 //		}
 //	}
-	
-	protected static boolean TEST_TERM_DOWMLOD = false;
-	
-	public static void main(String[] args) {
-		TEST_TERM_DOWMLOD = true;
-		
-		MsgPrinter.enableStatusMsgs(true);
-		MsgPrinter.enableErrorMsgs(true);
-		
-		// create tokenizer
-		MsgPrinter.printStatusMsg("Creating tokenizer...");
-		if (!OpenNLP.createTokenizer("res/nlp/tokenizer/opennlp/EnglishTok.bin.gz"))
-			MsgPrinter.printErrorMsg("Could not create tokenizer.");
-//		LingPipe.createTokenizer();
-		
-//		// create sentence detector
-//		MsgPrinter.printStatusMsg("Creating sentence detector...");
-//		if (!OpenNLP.createSentenceDetector("res/nlp/sentencedetector/opennlp/EnglishSD.bin.gz"))
-//			MsgPrinter.printErrorMsg("Could not create sentence detector.");
-//		LingPipe.createSentenceDetector();
-		
-		// create stemmer
-		MsgPrinter.printStatusMsg("Creating stemmer...");
-		SnowballStemmer.create();
-		
-//		// create part of speech tagger
-//		MsgPrinter.printStatusMsg("Creating POS tagger...");
-//		if (!OpenNLP.createPosTagger("res/nlp/postagger/opennlp/tag.bin.gz",
-//									 "res/nlp/postagger/opennlp/tagdict"))
-//			MsgPrinter.printErrorMsg("Could not create OpenNLP POS tagger.");
-//		if (!StanfordPosTagger.init("res/nlp/postagger/stanford/" +
-//				"train-wsj-0-18.holder"))
-//			MsgPrinter.printErrorMsg("Could not create Stanford POS tagger.");
-		
-//		// create chunker
-//		MsgPrinter.printStatusMsg("Creating chunker...");
-//		if (!OpenNLP.createChunker("res/nlp/phrasechunker/opennlp/" +
-//								   "EnglishChunk.bin.gz"))
-//			MsgPrinter.printErrorMsg("Could not create chunker.");
-		
-		// create named entity taggers
-		MsgPrinter.printStatusMsg("Creating NE taggers...");
-		NETagger.loadListTaggers("res/nlp/netagger/lists/");
-		NETagger.loadRegExTaggers("res/nlp/netagger/patterns.lst");
-		MsgPrinter.printStatusMsg("  ...loading models");
-//		if (!NETagger.loadNameFinders("res/nlp/netagger/opennlp/"))
-//			MsgPrinter.printErrorMsg("Could not create OpenNLP NE tagger.");
-//		if (!StanfordNeTagger.isInitialized() && !StanfordNeTagger.init())
-//			MsgPrinter.printErrorMsg("Could not create Stanford NE tagger.");
-		MsgPrinter.printStatusMsg("  ...done");
-		
-		WikipediaTermImportanceFilter wtif = new WikipediaTermImportanceFilter(NO_NORMALIZATION, NO_NORMALIZATION, false);
-		TRECTarget[] targets = TREC13To16Parser.loadTargets(args[0]);
-		for (TRECTarget target : targets) {
-			String question = target.getTargetDesc();
-			
-			// query generation
-			MsgPrinter.printGeneratingQueries();
-			String qn = QuestionNormalizer.normalize(question);
-			MsgPrinter.printNormalization(qn);  // print normalized question string
-			Logger.logNormalization(qn);  // log normalized question string
-			String[] kws = KeywordExtractor.getKeywords(qn);
-			AnalyzedQuestion aq = new AnalyzedQuestion(question);
-			aq.setKeywords(kws);
-			aq.setFactoid(false);
-			
-			Query[] queries = new BagOfWordsG().generateQueries(aq);
-			for (int q = 0; q < queries.length; q++)
-				queries[q].setOriginalQueryString(question);
-			
-			Result[] results = new Result[1];
-			results[0] = new Result("This would be the answer", queries[0]);
-			wtif.apply(results);
-		}
-	}
+
+    /**
+     * @see info.ephyra.answerselection.filters.WebTermImportanceFilter#getTermCounters(java.lang.String[])
+     */
+    public HashMap<String, TermCounter> getTermCounters(String[] targets) {
+        if (targets.length == 0) return new HashMap<String, TermCounter>();
+        return this.getTermCounters(targets[0]);
+    }
+
+    /**
+     * fetch the term frequencies in the top X result snippets of a web search
+     * for some target
+     *
+     * @param target the target
+     * @return a HashMap mapping the terms in the web search results to their frequency in the
+     * snippets
+     */
+    public HashMap<String, TermCounter> getTermCounters(String target) {
+        HashMap<String, TermCounter> rawTermCounters = null;
+        try {
+            String url = "http://en.wikipedia.org/wiki/" + target.replaceAll("\\s", "_");
+            URLConnection connection = new URL(url).openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+            connection.setRequestProperty("User-Agent", "Ephyra");
+            connection.connect();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            rawTermCounters = new HashMap<String, TermCounter>();
+            boolean inTag = false;
+            int c = 0;
+            StringBuffer term = new StringBuffer();
+            while ((c = reader.read()) != -1) {
+                if (c == '<') {
+                    inTag = true;
+                    if (term.length() != 0) {
+                        String stemmedTerm = SnowballStemmer.stem(term.toString().toLowerCase());
+                        System.out.println(stemmedTerm);
+                        if (!rawTermCounters.containsKey(stemmedTerm))
+                            rawTermCounters.put(stemmedTerm, new TermCounter());
+                        rawTermCounters.get(stemmedTerm).increment(1);
+                        term = new StringBuffer();
+                    }
+                } else if (c == '>') {
+                    inTag = false;
+                } else if (!inTag) {
+                    if (c < 33) {
+                        if (term.length() != 0) {
+                            String stemmedTerm = SnowballStemmer.stem(term.toString().toLowerCase());
+                            System.out.println(stemmedTerm);
+                            if (!rawTermCounters.containsKey(stemmedTerm))
+                                rawTermCounters.put(stemmedTerm, new TermCounter());
+                            rawTermCounters.get(stemmedTerm).increment(1);
+                            term = new StringBuffer();
+                        }
+                    } else term.append((char) c);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rawTermCounters;
+    }
 }

@@ -15,15 +15,15 @@ import edu.cmu.minorthird.util.IOUtil;
 
 /**
  * A trained model-based classifier for the answer type of a question.
- * 
+ *
  * @author Justin Betteridge
  * @version 2008-02-10
  */
-public class TrainedQuestionClassifier extends QuestionClassifier
-{
+public class TrainedQuestionClassifier extends QuestionClassifier {
     private Classifier classifier;
 
-    public TrainedQuestionClassifier() {}
+    public TrainedQuestionClassifier() {
+    }
 
     public void initialize() throws Exception {
         // return if already initialized
@@ -32,12 +32,12 @@ public class TrainedQuestionClassifier extends QuestionClassifier
             throw new Exception("languagePair must be set before calling initialize");
         super.initialize();
         Properties properties = Properties.loadFromClassName(this.getClass().getName());
-        
-        properties = properties.mapProperties().get(languagePair.getFirst()+"_"+languagePair.getSecond());
-                
+
+        properties = properties.mapProperties().get(languagePair.getFirst() + "_" + languagePair.getSecond());
+
         String classifierFileName = properties.get("classifierFile");
         if (classifierFileName == null)
-            throw new RuntimeException("Required property classifierFile is undefined'"); 
+            throw new RuntimeException("Required property classifierFile is undefined'");
         classifier = (Classifier) IOUtil.loadSerialized(new File(
                 classifierFileName));
 
@@ -50,7 +50,7 @@ public class TrainedQuestionClassifier extends QuestionClassifier
         synchronized (classifier) {
             label = classifier.classification(instance);
         }
-        String labelStr = label.bestClassName().replaceAll("-",".");
+        String labelStr = label.bestClassName().replaceAll("-", ".");
         AnswerType atype = AnswerType.constructFromString(labelStr);
         double weight = label.bestWeight();
         if (weight > 1.0) weight = (1 - (1 / weight));

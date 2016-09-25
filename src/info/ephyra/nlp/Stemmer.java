@@ -46,11 +46,11 @@ import java.io.IOException;
  */
 
 class Stemmer {
+    private static final int INC = 50;
     private char[] b;
     private int i,     /* offset into b */
             i_end, /* offset to end of stemmed word */
             j, k;
-    private static final int INC = 50;
 
     /* unit of size whereby b is increased */
     public Stemmer() {
@@ -59,12 +59,74 @@ class Stemmer {
         i_end = 0;
     }
 
+    /**
+     * Test program for demonstrating the Stemmer.  It reads text from a
+     * a list of files, stems each word, and writes the result to standard
+     * output. Note that the word stemmed is expected to be in lower case:
+     * forcing lower case must be done outside the Stemmer class.
+     * Usage: Stemmer file-name file-name ...
+     */
+    public static void main(String[] args) {
+        char[] w = new char[501];
+        Stemmer s = new Stemmer();
+        for (String arg : args)
+            try {
+                FileInputStream in = new FileInputStream(arg);
+
+                try {
+                    while (true)
+
+                    {
+                        int ch = in.read();
+                        if (Character.isLetter((char) ch)) {
+                            int j = 0;
+                            while (true) {
+                                ch = Character.toLowerCase((char) ch);
+                                w[j] = (char) ch;
+                                if (j < 500) j++;
+                                ch = in.read();
+                                if (!Character.isLetter((char) ch)) {
+                       /* to test add(char ch) */
+                                    for (int c = 0; c < j; c++) s.add(w[c]);
+
+                       /* or, to test add(char[] w, int j) */
+                       /* s.add(w, j); */
+
+                                    s.stem();
+                                    {
+                                        String u;
+
+                          /* and now, to test toString() : */
+                                        u = s.toString();
+
+                          /* to test getResultBuffer(), getResultLength() : */
+                          /* u = new String(s.getResultBuffer(), 0, s.getResultLength()); */
+
+                                        System.out.print(u);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        if (ch < 0) break;
+                        System.out.print((char) ch);
+                    }
+                } catch (IOException e) {
+                    System.out.println("error reading " + arg);
+                    break;
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("file " + arg + " not found");
+                break;
+            }
+    }
+
     public void reset() {
         b = new char[INC];
         i = 0;
         i_end = 0;
-        j=0;
-        k=0;
+        j = 0;
+        k = 0;
     }
 
     /**
@@ -80,7 +142,6 @@ class Stemmer {
         }
         b[i++] = ch;
     }
-
 
     /**
      * Adds wLen characters to the word being stemmed contained in a portion
@@ -113,6 +174,8 @@ class Stemmer {
         return i_end;
     }
 
+   /* cons(i) is true <=> b[i] is a consonant. */
+
     /**
      * Returns a reference to a character buffer containing the results of
      * the stemming process.  You also need to consult getResultLength()
@@ -122,7 +185,16 @@ class Stemmer {
         return b;
     }
 
-   /* cons(i) is true <=> b[i] is a consonant. */
+   /* m() measures the number of consonant sequences between 0 and j. if c is
+      a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
+      presence,
+
+         <c><v>       gives 0
+         <c>vc<v>     gives 1
+         <c>vcvc<v>   gives 2
+         <c>vcvcvc<v> gives 3
+         ....
+   */
 
     private final boolean cons(int i) {
         switch (b[i]) {
@@ -139,16 +211,7 @@ class Stemmer {
         }
     }
 
-   /* m() measures the number of consonant sequences between 0 and j. if c is
-      a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
-      presence,
-
-         <c><v>       gives 0
-         <c>vc<v>     gives 1
-         <c>vcvc<v>   gives 2
-         <c>vcvcvc<v> gives 3
-         ....
-   */
+   /* vowelinstem() is true <=> 0,...j contains a vowel */
 
     private int m() {
         int n = 0;
@@ -176,20 +239,12 @@ class Stemmer {
         }
     }
 
-   /* vowelinstem() is true <=> 0,...j contains a vowel */
+   /* doublec(j) is true <=> j,(j-1) contain a double consonant. */
 
     private boolean vowelinstem() {
         int i;
         for (i = 0; i <= j; i++) if (!cons(i)) return true;
         return false;
-    }
-
-   /* doublec(j) is true <=> j,(j-1) contain a double consonant. */
-
-    private boolean doublec(int j) {
-        if (j < 1) return false;
-        if (b[j] != b[j - 1]) return false;
-        return cons(j);
     }
 
    /* cvc(i) is true <=> i-2,i-1,i has the form consonant - vowel - consonant
@@ -201,6 +256,12 @@ class Stemmer {
 
    */
 
+    private boolean doublec(int j) {
+        if (j < 1) return false;
+        if (b[j] != b[j - 1]) return false;
+        return cons(j);
+    }
+
     private boolean cvc(int i) {
         if (i < 2 || !cons(i) || cons(i - 1) || !cons(i - 2)) return false;
         {
@@ -209,6 +270,9 @@ class Stemmer {
         }
         return true;
     }
+
+   /* setto(s) sets (j+1),...k to the characters in the string s, readjusting
+      k. */
 
     private boolean ends(String s) {
         int l = s.length();
@@ -219,20 +283,13 @@ class Stemmer {
         return true;
     }
 
-   /* setto(s) sets (j+1),...k to the characters in the string s, readjusting
-      k. */
+   /* r(s) is used further down. */
 
     private void setto(String s) {
         int l = s.length();
         int o = j + 1;
         for (int i = 0; i < l; i++) b[o + i] = s.charAt(i);
         k = j + l;
-    }
-
-   /* r(s) is used further down. */
-
-    private void r(String s) {
-        if (m() > 0) setto(s);
     }
 
    /* step1() gets rid of plurals and -ed or -ing. e.g.
@@ -257,11 +314,17 @@ class Stemmer {
 
    */
 
+    private void r(String s) {
+        if (m() > 0) setto(s);
+    }
+
+   /* step2() turns terminal y to i when there is another vowel in the stem. */
+
     private void step1() {
         if (b[k] == 's') {
             if (ends("sses")) k -= 2;
             else if (ends("ies")) setto("i");
-            else if ( k > 0 && b[k - 1] != 's') k--;
+            else if (k > 0 && b[k - 1] != 's') k--;
         }
         if (ends("eed")) {
             if (m() > 0) k--;
@@ -280,15 +343,15 @@ class Stemmer {
         }
     }
 
-   /* step2() turns terminal y to i when there is another vowel in the stem. */
+   /* step3() maps double suffices to single ones. so -ization ( = -ize plus
+      -ation) maps to -ize etc. note that the string before the suffix must give
+      m() > 0. */
 
     private void step2() {
         if (ends("y") && vowelinstem()) b[k] = 'i';
     }
 
-   /* step3() maps double suffices to single ones. so -ization ( = -ize plus
-      -ation) maps to -ize etc. note that the string before the suffix must give
-      m() > 0. */
+   /* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 
     private void step3() {
         if (k == 0) return; /* For Bug 1 */
@@ -395,7 +458,7 @@ class Stemmer {
         }
     }
 
-   /* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
+   /* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 
     private void step4() {
         switch (b[k]) {
@@ -438,7 +501,7 @@ class Stemmer {
         }
     }
 
-   /* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
+   /* step6() removes a final -e if m() > 1. */
 
     private void step5() {
         if (k == 0) return; /* for Bug 1 */
@@ -495,15 +558,13 @@ class Stemmer {
         if (m() > 1) k = j;
     }
 
-   /* step6() removes a final -e if m() > 1. */
-
     private void step6() {
         j = k;
         if (b[k] == 'e') {
             int a = m();
             if (a > 1 || a == 1 && !cvc(k - 1)) k--;
         }
-        if ( k >= 0 && b[k] == 'l' && doublec(k) && m() > 1) k--;
+        if (k >= 0 && b[k] == 'l' && doublec(k) && m() > 1) k--;
     }
 
     /**
@@ -524,67 +585,5 @@ class Stemmer {
         }
         i_end = k + 1;
         i = 0;
-    }
-
-    /**
-     * Test program for demonstrating the Stemmer.  It reads text from a
-     * a list of files, stems each word, and writes the result to standard
-     * output. Note that the word stemmed is expected to be in lower case:
-     * forcing lower case must be done outside the Stemmer class.
-     * Usage: Stemmer file-name file-name ...
-     */
-    public static void main(String[] args) {
-        char[] w = new char[501];
-        Stemmer s = new Stemmer();
-        for (String arg : args)
-            try {
-                FileInputStream in = new FileInputStream(arg);
-
-                try {
-                    while (true)
-
-                    {
-                        int ch = in.read();
-                        if (Character.isLetter((char) ch)) {
-                            int j = 0;
-                            while (true) {
-                                ch = Character.toLowerCase((char) ch);
-                                w[j] = (char) ch;
-                                if (j < 500) j++;
-                                ch = in.read();
-                                if (!Character.isLetter((char) ch)) {
-                       /* to test add(char ch) */
-                                    for (int c = 0; c < j; c++) s.add(w[c]);
-
-                       /* or, to test add(char[] w, int j) */
-                       /* s.add(w, j); */
-
-                                    s.stem();
-                                    {
-                                        String u;
-
-                          /* and now, to test toString() : */
-                                        u = s.toString();
-
-                          /* to test getResultBuffer(), getResultLength() : */
-                          /* u = new String(s.getResultBuffer(), 0, s.getResultLength()); */
-
-                                        System.out.print(u);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                        if (ch < 0) break;
-                        System.out.print((char) ch);
-                    }
-                } catch (IOException e) {
-                    System.out.println("error reading " + arg);
-                    break;
-                }
-            } catch (FileNotFoundException e) {
-                System.out.println("file " + arg + " not found");
-                break;
-            }
     }
 }
