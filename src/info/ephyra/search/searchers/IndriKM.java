@@ -20,7 +20,7 @@ import lemurproject.indri.ScoredExtentResult;
  * parallel.</p>
  * 
  * <p>This class extends the class <code>KnowledgeMiner</code>.</p>
- * 
+ *
  * @author Nico Schlaefer
  * @version 2007-07-26
  */
@@ -237,10 +237,11 @@ public class IndriKM extends KnowledgeMiner {
 					int byteEnd = documents[j].positions[passageEnd - 1].end;
 					
 					byte[] doc = documents[j].text.getBytes("UTF-8");
-					byte[] p = new byte[byteEnd - byteBegin];
-					for (int offset = byteBegin; offset < byteEnd; offset++)
-						p[offset - byteBegin] = doc[offset];
-					passages[j+i] = new String(p);
+//					byte[] p = new byte[byteEnd - byteBegin];
+//					for (int offset = byteBegin; offset < byteEnd; offset++)
+//						p[offset - byteBegin] = doc[offset];
+                    passages[j+i] = new String(doc,byteBegin,byteEnd-byteBegin);
+//					passages[j+i] = new String(p);
 					
 //					passages[j+i] = documents[j].text.substring(byteBegin, byteEnd);
 					
@@ -254,8 +255,10 @@ public class IndriKM extends KnowledgeMiner {
 				}
 			}
 			String[] docNos = env.documentMetadata(results, "docno");
-		    System.out.println("searching results docNos=========>>>>>:"+ Arrays.toString(docNos));
-		    // close query environment
+            MsgPrinter.printStatusMsg("searching results docNos=========>>>>>:"+ Arrays.toString(docNos));
+//            System.out.println("passages:=========>>>>>:"+ Arrays.toString(passages));
+
+			// close query environment
 		    env.close();
 			
 			// return results

@@ -7,11 +7,6 @@ import java.util.HashMap;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
-import info.ephyra.util.StringUtils;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 
 /**
  * Wrapper for the Stanford named entity recognizer.
@@ -41,14 +36,14 @@ public class StanfordNeTagger {
 		return init(defaultSerializedClassifier);
 	}
 	
-	/**
-	 * Gets the path of the current serialized classifier.
-	 * 
-	 * @return path of the serializedClassifier
-	 */
-	public static String getCurrentClassifier() {
-		return serializedClassifier;
-	}
+//	/**
+//	 * Gets the path of the current serialized classifier.
+//	 *
+//	 * @return path of the serializedClassifier
+//	 */
+//	public static String getCurrentClassifier() {
+//		return serializedClassifier;
+//	}
 	
 	/**
 	 * Initializes the StanfordNeTagger with a custom model.
@@ -66,34 +61,34 @@ public class StanfordNeTagger {
 		}
 	}
 	
-	/**
-	 * Extracts NEs from an array of sentences.
-	 * 
-	 * @param sentences array of sentences
-	 * @return NEs per sentence and NE type, using a HashMap since the types
-	 *         might change with the model
-	 */
-	public static HashMap<String, String[][]> extractNEs(String[] sentences) {
-		HashMap<String, String[][]> results = new HashMap<String, String[][]>();
-		
-		for (int s = 0; s < sentences.length; s++) {
-			HashMap<String, String[]> sentenceNEs = extractNEs(sentences[s]);
-			ArrayList<String> sentenceNeTypes =
-				new ArrayList<String>(sentenceNEs.keySet());
-			for (int t = 0; t < sentenceNeTypes.size(); t++) {
-				String type = sentenceNeTypes.get(t);
-				String[][] nes = results.get(type);
-				if (nes == null) {
-					nes = new String[sentences.length][];
-					for (int i = 0; i < sentences.length; i++)
-						nes[i] = new String[0];
-					results.put(type, nes);
-				}
-				nes[s] = sentenceNEs.get(type);
-			}
-		}
-		return results;
-	}
+//	/**
+//	 * Extracts NEs from an array of sentences.
+//	 *
+//	 * @param sentences array of sentences
+//	 * @return NEs per sentence and NE type, using a HashMap since the types
+//	 *         might change with the model
+//	 */
+//	public static HashMap<String, String[][]> extractNEs(String[] sentences) {
+//		HashMap<String, String[][]> results = new HashMap<String, String[][]>();
+//
+//		for (int s = 0; s < sentences.length; s++) {
+//			HashMap<String, String[]> sentenceNEs = extractNEs(sentences[s]);
+//			ArrayList<String> sentenceNeTypes =
+//				new ArrayList<String>(sentenceNEs.keySet());
+//			for (int t = 0; t < sentenceNeTypes.size(); t++) {
+//				String type = sentenceNeTypes.get(t);
+//				String[][] nes = results.get(type);
+//				if (nes == null) {
+//					nes = new String[sentences.length][];
+//					for (int i = 0; i < sentences.length; i++)
+//						nes[i] = new String[0];
+//					results.put(type, nes);
+//				}
+//				nes[s] = sentenceNEs.get(type);
+//			}
+//		}
+//		return results;
+//	}
 	
 	/**
 	 * Extracts NEs from an individual sentence. Initializes the

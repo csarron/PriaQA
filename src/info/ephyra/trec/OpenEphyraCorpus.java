@@ -190,12 +190,12 @@ public class OpenEphyraCorpus extends OpenEphyra {
 		AnalyzedQuestion aq = QuestionAnalysis.analyze(question);
 		
 		// get corpus answers
-		Result[] resultsCorp = runPipeline(aq, Integer.MAX_VALUE,
+		Result[] results = runPipeline(aq, Integer.MAX_VALUE,
 				Float.NEGATIVE_INFINITY);
 		
 		// get web answers and project them
-		initFactoidWeb(resultsCorp);
-		Result[] results = runPipeline(aq, maxAnswers, absThresh);
+//		initFactoidWeb(resultsCorp);
+//		Result[] results = runPipeline(aq, maxAnswers, absThresh);
 		
 		// return results if any
 		if (results.length > 0) return results;
@@ -206,10 +206,10 @@ public class OpenEphyraCorpus extends OpenEphyra {
 			
 			// get corpus answers (only factoid answers)
 			initFactoidCorpus();
-			resultsCorp = runPipeline(aq, Integer.MAX_VALUE, 0);
+			results = runPipeline(aq, Integer.MAX_VALUE, 0);
 			
 			// get web answers and project them
-			initFactoidWeb(resultsCorp);
+//			initFactoidWeb(resultsCorp);
 			results = runPipeline(aq, maxAnswers, absThresh);
 		}
 		

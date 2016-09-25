@@ -1,7 +1,5 @@
 package info.ephyra.nlp;
 
-import org.tartarus.snowball.ext.englishStemmer;
-
 /**
  * This class provides an interface to the Snowball stemmer for the English
  * language.
@@ -11,13 +9,17 @@ import org.tartarus.snowball.ext.englishStemmer;
  */
 public class SnowballStemmer {
 	/** Snowball stemmer for the English language. */
-	private static englishStemmer stemmer;
-	
+	private static final ThreadLocal<Stemmer> stemmer=new ThreadLocal<Stemmer>(){
+		@Override
+		protected Stemmer initialValue() {
+			return new Stemmer();
+		}
+	};
 	/**
 	 * Creates the stemmer.
 	 */
 	public static void create() {
-		stemmer = new englishStemmer();
+//		stemmer = new englishStemmer();
 	}
 	
     /**
@@ -27,9 +29,11 @@ public class SnowballStemmer {
      * @return stemmed word
      */
 	public static String stem(String word) {
-		stemmer.setCurrent(word);
-		stemmer.stem();
-		return stemmer.getCurrent();
+		stemmer.get().reset();
+		char[] w=word.toCharArray();
+		stemmer.get().add(w,w.length);
+		stemmer.get().stem();
+		return stemmer.get().toString();
     }
 	
 	/**

@@ -6,6 +6,7 @@ import info.ephyra.questionanalysis.Term;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -544,7 +545,20 @@ public class Result implements Comparable<Result>, Serializable {
 		
 		return result;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "[query is: "+query+"\n"
+				+"answer is: "+((answer!=null&&answer.length()>100)?answer.substring(0,100):answer)+"\n"
+				+"docID is: "+docID+"\n"
+				+"score is: "+score+"\n"
+				+"normScore is: "+normScore+"\n"
+				+"correct is: "+correct+"\n"
+				+"sentence is: "+((sentence!=null&&sentence.length()>100)?sentence.substring(0,100):sentence)+"\n"
+				+"neTypes are: "+ Arrays.toString(neTypes)+"]\n"
+				;
+	}
+
 	/**	add an extra score to this Result for storage, extra score will not influence sorting
 	 * @param	sourceName	the name of the source of the score
 	 * @param	score		the value of the score

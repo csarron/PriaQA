@@ -64,7 +64,8 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
 		float mrr = 0;
 		
 		for (int i = 0; i < qss.length; i++) {
-			MsgPrinter.printQuestion(qss[i]);
+			System.out.println("Question NO:>"+i+"<==="+qss[i]);
+			MsgPrinter.printQuestion("NO:>"+i+"<"+qss[i]);
 			
 			Logger.enableLogging(false);
 			
@@ -92,7 +93,8 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
 				}
 			}
 			if (firstCorrect > 0) {
-				precision++;
+                System.out.println("correct!");
+                precision++;
 				mrr += ((float) 1) / firstCorrect;
 			}
 			
@@ -102,8 +104,10 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
 		
 		precision /= qss.length;
 		mrr /= qss.length;
-		
-		Logger.logScores(precision, mrr);
+        System.out.println("precision: "+ precision);
+        System.out.println("mrr: "+ mrr);
+
+        Logger.logScores(precision, mrr);
 	}
 	
 	/**
@@ -118,7 +122,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
 	 */
 	public static void main(String[] args) {
 		// enable output of status and error messages
-		MsgPrinter.enableStatusMsgs(true);
+		MsgPrinter.enableStatusMsgs(false);
 		MsgPrinter.enableErrorMsgs(true);
 		
 		if (args.length < 2) {

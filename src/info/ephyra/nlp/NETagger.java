@@ -1,31 +1,23 @@
 package info.ephyra.nlp;
 
 import info.ephyra.io.MsgPrinter;
-import info.ephyra.util.FileUtils;
 import info.ephyra.util.StringUtils;
+
+import opennlp.tools.lang.english.NameFinder;
+import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.util.Span;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import opennlp.maxent.MaxentModel;
-import opennlp.maxent.io.SuffixSensitiveGISModelReader;
-import opennlp.tools.lang.english.NameFinder;
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.parser.Parse;
-import opennlp.tools.util.Span;
 
 /**
  * <p>This class combines model-based, pattern-based and list-based named entity
@@ -67,34 +59,34 @@ public class NETagger {
 		"NEorganization",
 		};
 	
-	/**
-	 * Creates the OpenNLP name finders and sets the named entity types that are
-	 * recognized by the finders.
-	 * 
-	 * @param dir directory containing the models for the name finders
-	 * @return true, iff the name finders were created successfully
-	 */
-	public static boolean loadNameFinders(String dir) {
-		File[] files = FileUtils.getFiles(dir);
-		
-		finders = new NameFinder[files.length];
-		finderNames = new String[files.length];
-		
-		try {
-		    for (int i = 0; i < files.length; i++) {
-		    	MaxentModel model =
-		    		new SuffixSensitiveGISModelReader(files[i]).getModel();
-		    	
-		    	finders[i] = new NameFinder(model);
-		    	finderNames[i] = files[i].getName().split("\\.")[0];
-				MsgPrinter.printStatusMsg("    ...for " + finderNames[i]);
-		    }
-		} catch (IOException e) {
-			return false;
-		}
-		
-		return true;
-	}
+//	/**
+//	 * Creates the OpenNLP name finders and sets the named entity types that are
+//	 * recognized by the finders.
+//	 *
+//	 * @param dir directory containing the models for the name finders
+//	 * @return true, iff the name finders were created successfully
+//	 */
+//	public static boolean loadNameFinders(String dir) {
+//		File[] files = FileUtils.getFiles(dir);
+//
+//		finders = new NameFinder[files.length];
+//		finderNames = new String[files.length];
+//
+//		try {
+//		    for (int i = 0; i < files.length; i++) {
+//		    	MaxentModel model =
+//		    		new SuffixSensitiveGISModelReader(files[i]).getModel();
+//
+//		    	finders[i] = new NameFinder(model);
+//		    	finderNames[i] = files[i].getName().split("\\.")[0];
+//				MsgPrinter.printStatusMsg("    ...for " + finderNames[i]);
+//		    }
+//		} catch (IOException e) {
+//			return false;
+//		}
+//
+//		return true;
+//	}
 	
 	// ==================
 	// List-based taggers
@@ -309,14 +301,14 @@ public class NETagger {
 	// Tagger statistics
 	// =================
 	
-	/**
-	 * Returns the number of NE taggers.
-	 * 
-	 * @return number of name finders and regular expressions
-	 */
-	public static int getNumberOfTaggers() {
-		return finderNames.length + allPatternNames.length + listNames.length + stanfordNames.length;
-	}
+//	/**
+//	 * Returns the number of NE taggers.
+//	 *
+//	 * @return number of name finders and regular expressions
+//	 */
+//	public static int getNumberOfTaggers() {
+//		return finderNames.length + allPatternNames.length + listNames.length + stanfordNames.length;
+//	}
 	
 	/**
 	 * Returns the NE type that is recognized by the tagger with the given ID.
@@ -388,21 +380,21 @@ public class NETagger {
 		return false;
 	}
 	
-	/**
-	 * Checks if there is a model-based tagger for one of the given NE types.
-	 * 
-	 * @param neTypes NE types
-	 * @return <code>true</code> iff there is a model-based tagger for one of
-	 *         these types
-	 */
-	public static boolean hasModelType(String[] neTypes) {
-		if (neTypes == null) return false;
-		
-		for (String neType : neTypes)
-			if (isModelType(neType)) return true;
-		
-		return false;
-	}
+//	/**
+//	 * Checks if there is a model-based tagger for one of the given NE types.
+//	 *
+//	 * @param neTypes NE types
+//	 * @return <code>true</code> iff there is a model-based tagger for one of
+//	 *         these types
+//	 */
+//	public static boolean hasModelType(String[] neTypes) {
+//		if (neTypes == null) return false;
+//
+//		for (String neType : neTypes)
+//			if (isModelType(neType)) return true;
+//
+//		return false;
+//	}
 	
 	/**
 	 * Checks if there is a model-based tagger for each of the given NE types.
@@ -420,107 +412,107 @@ public class NETagger {
 		return true;
 	}
 	
-	/**
-	 * Gets the current value of the edit distance threshold for fuzzy-lookups
-	 * in dictionaries.
-	 * 
-	 * @return the current value of the fuzzy-lookups threshold
-	 */
-	public static int getFuzzyMatchingThreshold() {
-		return fuzzyListLookupThreshold;
-	}
-	
-	/**
-	 * Sets the threshold for fuzzy-lookups in gazetteer lists (aka
-	 * dictionaries). Setting the threshold to zero (the initial value) will
-	 * disable fuzzy lookups. The extractNes() and tagNes() methods will then
-	 * behave as they used to. Setting a higher threshold, in turn, will result
-	 * in more strings extracted, thus in a certain tolerance with regard to
-	 * typos in the documents. A side effect is a growth of the processing time
-	 * for the extractNes() and tagNes() methods, especially for large
-	 * dictionaries.
-	 * 
-	 * @param threshold the new value for the edit distance threshold for
-	 *                  fuzzy-lookups in dictionaries
-	 */
-	public static void setFuzzyMatchingThreshold(int threshold) {
-		fuzzyListLookupThreshold = threshold;
-	}
-	
-	// ==========
-	// NE tagging
-	// ==========
-	
-	/**
-	 * Adds named entity information to parses.
-	 * 
-	 * @param tag named entity type
-	 * @param names spans of tokens that are named entities
-	 * @param tokens parses for the tokens
-	 */
-	private static void addNames(String tag, List names, Parse[] tokens) {
-		for (int i = 0; i < names.size(); i++) {
-			Span nameTokenSpan = (Span) names.get(i);
-			Parse startToken = tokens[nameTokenSpan.getStart()];
-			Parse endToken = tokens[nameTokenSpan.getEnd()];
-			Parse commonP = startToken.getCommonParent(endToken);
-			
-			if (commonP != null) {
-				Span nameSpan = new Span(startToken.getSpan().getStart(),
-										 endToken.getSpan().getEnd());
-				
-				if (nameSpan.equals(commonP.getSpan())) {
-					// common parent matches exactly the named entity
-					commonP.insert(new Parse(commonP.getText(), nameSpan, tag,
-							1.0));
-				} else {
-					// common parent includes the named entity
-					Parse[] kids = commonP.getChildren();
-					boolean crossingKids = false;
-					
-					for (int j = 0; j < kids.length; j++)
-						if (nameSpan.crosses(kids[j].getSpan()))
-							crossingKids = true;
-					
-					if (!crossingKids) {
-						// named entity does not cross children
-						commonP.insert(new Parse(commonP.getText(), nameSpan,
-								tag, 1.0));
-					} else {
-						// NE crosses children
-						if (commonP.getType().equals("NP")) {
-							Parse[] grandKids = kids[0].getChildren();
-							
-							Parse last = grandKids[grandKids.length - 1];
-							if (grandKids.length > 1 &&
-								nameSpan.contains(last.getSpan()))
-								commonP.insert(new Parse(commonP.getText(),
-										commonP.getSpan(), tag,1.0));
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Recursive method called by <code>extractNes(Parse)</code> to extract NEs
-	 * from a parse tree augmented with NE tags.
-	 * 
-	 * @param parse a node of a parse tree
-	 * @param nes NEs found so far
-	 */
-	private static void extractNesRec(Parse parse, ArrayList<String>[] nes) {
-		String type = parse.getType();
-		if (type.startsWith("NE")) {
-			String text = parse.getText().substring(parse.getSpan().getStart(),
-													parse.getSpan().getEnd());
-			nes[getNeIds(type)[0]].add(text.trim());
-		}
-		
-		for (Parse child : parse.getChildren())
-			extractNesRec(child, nes);
-	}
+//	/**
+//	 * Gets the current value of the edit distance threshold for fuzzy-lookups
+//	 * in dictionaries.
+//	 *
+//	 * @return the current value of the fuzzy-lookups threshold
+//	 */
+//	public static int getFuzzyMatchingThreshold() {
+//		return fuzzyListLookupThreshold;
+//	}
+//
+//	/**
+//	 * Sets the threshold for fuzzy-lookups in gazetteer lists (aka
+//	 * dictionaries). Setting the threshold to zero (the initial value) will
+//	 * disable fuzzy lookups. The extractNes() and tagNes() methods will then
+//	 * behave as they used to. Setting a higher threshold, in turn, will result
+//	 * in more strings extracted, thus in a certain tolerance with regard to
+//	 * typos in the documents. A side effect is a growth of the processing time
+//	 * for the extractNes() and tagNes() methods, especially for large
+//	 * dictionaries.
+//	 *
+//	 * @param threshold the new value for the edit distance threshold for
+//	 *                  fuzzy-lookups in dictionaries
+//	 */
+//	public static void setFuzzyMatchingThreshold(int threshold) {
+//		fuzzyListLookupThreshold = threshold;
+//	}
+//
+//	// ==========
+//	// NE tagging
+//	// ==========
+//
+//	/**
+//	 * Adds named entity information to parses.
+//	 *
+//	 * @param tag named entity type
+//	 * @param names spans of tokens that are named entities
+//	 * @param tokens parses for the tokens
+//	 */
+//	private static void addNames(String tag, List names, Parse[] tokens) {
+//		for (int i = 0; i < names.size(); i++) {
+//			Span nameTokenSpan = (Span) names.get(i);
+//			Parse startToken = tokens[nameTokenSpan.getStart()];
+//			Parse endToken = tokens[nameTokenSpan.getEnd()];
+//			Parse commonP = startToken.getCommonParent(endToken);
+//
+//			if (commonP != null) {
+//				Span nameSpan = new Span(startToken.getSpan().getStart(),
+//										 endToken.getSpan().getEnd());
+//
+//				if (nameSpan.equals(commonP.getSpan())) {
+//					// common parent matches exactly the named entity
+//					commonP.insert(new Parse(commonP.getText(), nameSpan, tag,
+//							1.0));
+//				} else {
+//					// common parent includes the named entity
+//					Parse[] kids = commonP.getChildren();
+//					boolean crossingKids = false;
+//
+//					for (int j = 0; j < kids.length; j++)
+//						if (nameSpan.crosses(kids[j].getSpan()))
+//							crossingKids = true;
+//
+//					if (!crossingKids) {
+//						// named entity does not cross children
+//						commonP.insert(new Parse(commonP.getText(), nameSpan,
+//								tag, 1.0));
+//					} else {
+//						// NE crosses children
+//						if (commonP.getType().equals("NP")) {
+//							Parse[] grandKids = kids[0].getChildren();
+//
+//							Parse last = grandKids[grandKids.length - 1];
+//							if (grandKids.length > 1 &&
+//								nameSpan.contains(last.getSpan()))
+//								commonP.insert(new Parse(commonP.getText(),
+//										commonP.getSpan(), tag,1.0));
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	/**
+//	 * Recursive method called by <code>extractNes(Parse)</code> to extract NEs
+//	 * from a parse tree augmented with NE tags.
+//	 *
+//	 * @param parse a node of a parse tree
+//	 * @param nes NEs found so far
+//	 */
+//	private static void extractNesRec(Parse parse, ArrayList<String>[] nes) {
+//		String type = parse.getType();
+//		if (type.startsWith("NE")) {
+//			String text = parse.getText().substring(parse.getSpan().getStart(),
+//													parse.getSpan().getEnd());
+//			nes[getNeIds(type)[0]].add(text.trim());
+//		}
+//
+//		for (Parse child : parse.getChildren())
+//			extractNesRec(child, nes);
+//	}
 	
 	/**
 	 * A rule-based tokenizer used to prepare a sentence for NE extraction.
@@ -544,188 +536,188 @@ public class NETagger {
 		return StringUtils.concatWithSpaces(tokens);
 	}
 	
-	/** THIS METHOD IS NOT USED
-	 * Performs named entity tagging on an array of (not tokenized) sentences.
-	 * 
-	 * @param sentences array of sentences
-	 * @return array of tagged sentences
-	 */
-	// TODO avoid duplicate tags if there are multiple taggers for the same type
-	@SuppressWarnings("unchecked")
-	public static String[] tagNes(String[] sentences) {
-		String[] results = new String[sentences.length];
-		for (int s = 0; s < results.length; s++) results[s] = "";
-		
-		// initialize prevTokenMaps
-		Map[] prevTokenMaps = new HashMap[finders.length];
-		for (int i = 0; i < finders.length; i++)
-			prevTokenMaps[i] = new HashMap();
-		
-		for (int s = 0; s < sentences.length; s++) {
-			// tokenize sentence
-			Span[] spans = NameFinder.tokenizeToSpans(sentences[s]);
-			String[] tokens = tokenize(sentences[s]);
-			
-			// find named entities
-			String[][] finderTags = new String[finders.length][];
-			for (int i = 0; i < finders.length; i++)
-				finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
-			
-			// update prevTokenMaps
-			for (int i = 0; i < prevTokenMaps.length; i++)
-				for (int j = 0; j < tokens.length; j++)
-					prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
-			
-			// apply regular expressions
-			String[][] regExTags = new String[patterns.length + 1 + quantityUnitPatterns.length][];
-			
-			//	don't tag NEproperName here
-			regExTags[0] = new String[tokens.length];
-			for (int i = 0; i < tokens.length; i++) regExTags[0][i] = NameFinderME.OTHER;
-			
-			for (int i = 1; i < patterns.length; i++)
-				regExTags[i] = RegExMatcher.markAllMatches(tokens, patterns[i], patternMaxTokens[i]);
-			
-			String[] numberMarkers = RegExMatcher.extractNumbers(tokens);
-			regExTags[patterns.length] = numberMarkers;
-			
-			for (int i = 0; i < quantityUnitPatterns.length; i++)
-				regExTags[patterns.length + i + 1] = RegExMatcher.extractQuantities(tokens, numberMarkers, quantityUnitPatterns[i], quantityUnitPatternMaxTokens[i]);
-			
-			//	apply lists
-			String[][] listTags = new String[lists.length][];
-			for (int i = 0; i < lists.length; i++)
-				listTags[i] = RegExMatcher.markAllContained(tokens, RegExMatcher.getDictionary(lists[i]), fuzzyListLookupThreshold);
-			
-			for (int i = 0; i < tokens.length; i++) {
-				//check for end tags
-				for (int j = 0; j < finders.length; j++)
-					if (i != 0)
-						if ((finderTags[j][i].equals(NameFinderME.START) ||
-							finderTags[j][i].equals(NameFinderME.OTHER)) &&
-							(finderTags[j][i - 1].equals(NameFinderME.START) ||
-							finderTags[j][i - 1].equals(NameFinderME.CONTINUE)))
-							results[s] += "</" + finderNames[j] + ">";
-				
-				//check for end tags
-				for (int j = 0; j < allPatternNames.length; j++)
-					if (i != 0)
-						if ((regExTags[j][i].equals(NameFinderME.START) ||
-							regExTags[j][i].equals(NameFinderME.OTHER)) &&
-							(regExTags[j][i - 1].equals(NameFinderME.START) ||
-							regExTags[j][i - 1].equals(NameFinderME.CONTINUE)))
-							results[s] += "</" + allPatternNames[j] + ">";
-				
-				//check for end tags
-				for (int j = 0; j < listNames.length; j++)
-					if (i != 0)
-						if ((regExTags[j][i].equals(NameFinderME.START) ||
-							regExTags[j][i].equals(NameFinderME.OTHER)) &&
-							(regExTags[j][i - 1].equals(NameFinderME.START) ||
-							regExTags[j][i - 1].equals(NameFinderME.CONTINUE)))
-							results[s] += "</" + listNames[j] + ">";
-				
-				if (i > 0 && spans[i - 1].getEnd() < spans[i].getStart())
-					results[s] += sentences[s].substring(spans[i - 1].getEnd(),
-														 spans[i].getStart());
-				
-				//check for start tags
-				for (int j = 0; j < finders.length; j++)
-					if (finderTags[j][i].equals(NameFinderME.START))
-						results[s] += "<" + finderNames[j] + ">";
-				
-				//check for start tags
-				for (int j = 0; j < allPatternNames.length; j++)
-					if (regExTags[j][i].equals(NameFinderME.START))
-						results[s] += "<" + allPatternNames[j] + ">";
-				
-				//check for start tags
-				for (int j = 0; j < listNames.length; j++)
-					if (regExTags[j][i].equals(NameFinderME.START))
-						results[s] += "<" + listNames[j] + ">";
-				
-		        results [s]+= tokens[i];
-			}
-			
-			if (tokens.length != 0) {
-				int last = tokens.length - 1;
-	
-				//final end tags
-				for (int i = 0; i < finders.length; i++)
-					if (finderTags[i][last].equals(NameFinderME.START) ||
-						finderTags[i][last].equals(NameFinderME.CONTINUE))
-						results[s] += "</" + finderNames[i] + ">";
-				
-				//final end tags
-				for (int i = 0; i < allPatternNames.length; i++)
-					if (regExTags[i][last].equals(NameFinderME.START) ||
-						regExTags[i][last].equals(NameFinderME.CONTINUE))
-						results[s] += "</" + allPatternNames[i] + ">";
-				
-				//final end tags
-				for (int i = 0; i < listNames.length; i++)
-					if (regExTags[i][last].equals(NameFinderME.START) ||
-						regExTags[i][last].equals(NameFinderME.CONTINUE))
-						results[s] += "</" + listNames[i] + ">";
-				
-				if (spans[last].getEnd() < sentences[s].length())
-					results[s] += sentences[s].substring(spans[last].getEnd());
-			}
-		}
-		
-		return results;
-	}
-	
-	/**
-	 * Performs named entity tagging on an array of full parses of sentences.
-	 * 
-	 * @param parses array of full parses of sentences
-	 */
-	// TODO only works with OpenNLP taggers so far
-	@SuppressWarnings("unchecked")
-	public static void tagNes(Parse[] parses) {
-		String[] results = new String[parses.length];
-		for (int s = 0; s < results.length; s++) results[s] = "";
-		
-		// initialize prevTokenMaps
-		Map[] prevTokenMaps = new HashMap[finders.length];
-		for (int i = 0; i < finders.length; i++)
-			prevTokenMaps[i] = new HashMap();
-		
-		for (Parse parse : parses) {
-			// get tokens
-			Parse[] tokens = parse.getTagNodes();
-			
-			// find named entites
-			String[][] finderTags = new String[finders.length][];
-			for (int i = 0; i < finders.length; i++)
-				finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
-			
-			// update prevTokenMaps
-			for (int i = 0; i < prevTokenMaps.length; i++)
-				for (int j = 0; j < tokens.length; j++)
-					prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
-			
-			for (int i = 0; i < finders.length; i++) {
-				int start = -1;
-				List<Span> names = new ArrayList<Span>(5);
-				
-				// determine spans of tokens that are named entities
-				for (int j = 0; j < tokens.length; j++) {
-					if ((finderTags[i][j].equals(NameFinderME.START) ||
-						 finderTags[i][j].equals(NameFinderME.OTHER))) {
-						if (start != -1) names.add(new Span(start, j - 1));
-						start = -1;
-					}
-					if (finderTags[i][j].equals(NameFinderME.START)) start = j;
-				}
-				if (start != -1) names.add(new Span(start, tokens.length - 1));
-				
-				// add name entity information to parse
-				addNames(finderNames[i], names, tokens);
-			}
-	    }
-	}
+//	/** THIS METHOD IS NOT USED
+//	 * Performs named entity tagging on an array of (not tokenized) sentences.
+//	 *
+//	 * @param sentences array of sentences
+//	 * @return array of tagged sentences
+//	 */
+//	// TODO avoid duplicate tags if there are multiple taggers for the same type
+//	@SuppressWarnings("unchecked")
+//	public static String[] tagNes(String[] sentences) {
+//		String[] results = new String[sentences.length];
+//		for (int s = 0; s < results.length; s++) results[s] = "";
+//
+//		// initialize prevTokenMaps
+//		Map[] prevTokenMaps = new HashMap[finders.length];
+//		for (int i = 0; i < finders.length; i++)
+//			prevTokenMaps[i] = new HashMap();
+//
+//		for (int s = 0; s < sentences.length; s++) {
+//			// tokenize sentence
+//			Span[] spans = NameFinder.tokenizeToSpans(sentences[s]);
+//			String[] tokens = tokenize(sentences[s]);
+//
+//			// find named entities
+//			String[][] finderTags = new String[finders.length][];
+//			for (int i = 0; i < finders.length; i++)
+//				finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
+//
+//			// update prevTokenMaps
+//			for (int i = 0; i < prevTokenMaps.length; i++)
+//				for (int j = 0; j < tokens.length; j++)
+//					prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
+//
+//			// apply regular expressions
+//			String[][] regExTags = new String[patterns.length + 1 + quantityUnitPatterns.length][];
+//
+//			//	don't tag NEproperName here
+//			regExTags[0] = new String[tokens.length];
+//			for (int i = 0; i < tokens.length; i++) regExTags[0][i] = NameFinderME.OTHER;
+//
+//			for (int i = 1; i < patterns.length; i++)
+//				regExTags[i] = RegExMatcher.markAllMatches(tokens, patterns[i], patternMaxTokens[i]);
+//
+//			String[] numberMarkers = RegExMatcher.extractNumbers(tokens);
+//			regExTags[patterns.length] = numberMarkers;
+//
+//			for (int i = 0; i < quantityUnitPatterns.length; i++)
+//				regExTags[patterns.length + i + 1] = RegExMatcher.extractQuantities(tokens, numberMarkers, quantityUnitPatterns[i], quantityUnitPatternMaxTokens[i]);
+//
+//			//	apply lists
+//			String[][] listTags = new String[lists.length][];
+//			for (int i = 0; i < lists.length; i++)
+//				listTags[i] = RegExMatcher.markAllContained(tokens, RegExMatcher.getDictionary(lists[i]), fuzzyListLookupThreshold);
+//
+//			for (int i = 0; i < tokens.length; i++) {
+//				//check for end tags
+//				for (int j = 0; j < finders.length; j++)
+//					if (i != 0)
+//						if ((finderTags[j][i].equals(NameFinderME.START) ||
+//							finderTags[j][i].equals(NameFinderME.OTHER)) &&
+//							(finderTags[j][i - 1].equals(NameFinderME.START) ||
+//							finderTags[j][i - 1].equals(NameFinderME.CONTINUE)))
+//							results[s] += "</" + finderNames[j] + ">";
+//
+//				//check for end tags
+//				for (int j = 0; j < allPatternNames.length; j++)
+//					if (i != 0)
+//						if ((regExTags[j][i].equals(NameFinderME.START) ||
+//							regExTags[j][i].equals(NameFinderME.OTHER)) &&
+//							(regExTags[j][i - 1].equals(NameFinderME.START) ||
+//							regExTags[j][i - 1].equals(NameFinderME.CONTINUE)))
+//							results[s] += "</" + allPatternNames[j] + ">";
+//
+//				//check for end tags
+//				for (int j = 0; j < listNames.length; j++)
+//					if (i != 0)
+//						if ((regExTags[j][i].equals(NameFinderME.START) ||
+//							regExTags[j][i].equals(NameFinderME.OTHER)) &&
+//							(regExTags[j][i - 1].equals(NameFinderME.START) ||
+//							regExTags[j][i - 1].equals(NameFinderME.CONTINUE)))
+//							results[s] += "</" + listNames[j] + ">";
+//
+//				if (i > 0 && spans[i - 1].getEnd() < spans[i].getStart())
+//					results[s] += sentences[s].substring(spans[i - 1].getEnd(),
+//														 spans[i].getStart());
+//
+//				//check for start tags
+//				for (int j = 0; j < finders.length; j++)
+//					if (finderTags[j][i].equals(NameFinderME.START))
+//						results[s] += "<" + finderNames[j] + ">";
+//
+//				//check for start tags
+//				for (int j = 0; j < allPatternNames.length; j++)
+//					if (regExTags[j][i].equals(NameFinderME.START))
+//						results[s] += "<" + allPatternNames[j] + ">";
+//
+//				//check for start tags
+//				for (int j = 0; j < listNames.length; j++)
+//					if (regExTags[j][i].equals(NameFinderME.START))
+//						results[s] += "<" + listNames[j] + ">";
+//
+//		        results [s]+= tokens[i];
+//			}
+//
+//			if (tokens.length != 0) {
+//				int last = tokens.length - 1;
+//
+//				//final end tags
+//				for (int i = 0; i < finders.length; i++)
+//					if (finderTags[i][last].equals(NameFinderME.START) ||
+//						finderTags[i][last].equals(NameFinderME.CONTINUE))
+//						results[s] += "</" + finderNames[i] + ">";
+//
+//				//final end tags
+//				for (int i = 0; i < allPatternNames.length; i++)
+//					if (regExTags[i][last].equals(NameFinderME.START) ||
+//						regExTags[i][last].equals(NameFinderME.CONTINUE))
+//						results[s] += "</" + allPatternNames[i] + ">";
+//
+//				//final end tags
+//				for (int i = 0; i < listNames.length; i++)
+//					if (regExTags[i][last].equals(NameFinderME.START) ||
+//						regExTags[i][last].equals(NameFinderME.CONTINUE))
+//						results[s] += "</" + listNames[i] + ">";
+//
+//				if (spans[last].getEnd() < sentences[s].length())
+//					results[s] += sentences[s].substring(spans[last].getEnd());
+//			}
+//		}
+//
+//		return results;
+//	}
+//
+//	/**
+//	 * Performs named entity tagging on an array of full parses of sentences.
+//	 *
+//	 * @param parses array of full parses of sentences
+//	 */
+//	// TODO only works with OpenNLP taggers so far
+//	@SuppressWarnings("unchecked")
+//	public static void tagNes(Parse[] parses) {
+//		String[] results = new String[parses.length];
+//		for (int s = 0; s < results.length; s++) results[s] = "";
+//
+//		// initialize prevTokenMaps
+//		Map[] prevTokenMaps = new HashMap[finders.length];
+//		for (int i = 0; i < finders.length; i++)
+//			prevTokenMaps[i] = new HashMap();
+//
+//		for (Parse parse : parses) {
+//			// get tokens
+//			Parse[] tokens = parse.getTagNodes();
+//
+//			// find named entites
+//			String[][] finderTags = new String[finders.length][];
+//			for (int i = 0; i < finders.length; i++)
+//				finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
+//
+//			// update prevTokenMaps
+//			for (int i = 0; i < prevTokenMaps.length; i++)
+//				for (int j = 0; j < tokens.length; j++)
+//					prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
+//
+//			for (int i = 0; i < finders.length; i++) {
+//				int start = -1;
+//				List<Span> names = new ArrayList<Span>(5);
+//
+//				// determine spans of tokens that are named entities
+//				for (int j = 0; j < tokens.length; j++) {
+//					if ((finderTags[i][j].equals(NameFinderME.START) ||
+//						 finderTags[i][j].equals(NameFinderME.OTHER))) {
+//						if (start != -1) names.add(new Span(start, j - 1));
+//						start = -1;
+//					}
+//					if (finderTags[i][j].equals(NameFinderME.START)) start = j;
+//				}
+//				if (start != -1) names.add(new Span(start, tokens.length - 1));
+//
+//				// add name entity information to parse
+//				addNames(finderNames[i], names, tokens);
+//			}
+//	    }
+//	}
 	
 	/**
 	 * Extracts NEs from an array of tokenized sentences.
@@ -856,11 +848,13 @@ public class NETagger {
                         }*/
 
 			//	apply stanford tagger
-			HashMap <String, String[]> allStanfordNEs = StanfordNeTagger.extractNEs(StringUtils.concatWithSpaces(sentences[s]));
-                        
+//            System.out.println(">>>>>>>>>>>AnswerPatternFilter Applying Stanford NER>>>>>>>>>");
+
+            HashMap <String, String[]> allStanfordNEs = StanfordNeTagger.extractNEs(StringUtils.concatWithSpaces(sentences[s]));
+
                         //pw.printf("%s\n", StringUtils.concatWithSpaces(sentences[s]));
                       //  pw.printf("%s ----- %s\n", StringUtils.concatWithSpaces(sentences[s]), nes.toString());
-                        
+
 			for (int i = 0; i < stanfordNames.length; i++) {
 				String[] stanfordNEs = allStanfordNEs.get(stanfordNames[i]);
 				if (stanfordNEs == null) stanfordNEs = new String[0];
@@ -955,7 +949,9 @@ public class NETagger {
 					i -= listNames.length;
 					
 					//	apply stanford tagger
-					for (int s = 0; s < sentences.length; s++) {
+//                    System.out.println(">>>>>>>>>>>AnswerTypeFilter Applying Stanford NER>>>>>>>>>");
+                    for (int s = 0; s < sentences.length; s++) {
+
 						HashMap <String, String[]> allStanfordNEs = StanfordNeTagger.extractNEs(StringUtils.concatWithSpaces(sentences[s]));
 						String[] stanfordNEs = allStanfordNEs.get(stanfordNames[i]);
 						if (stanfordNEs == null) stanfordNEs = new String[0];
@@ -968,27 +964,27 @@ public class NETagger {
 		return nes;
 	}
 	
-	/** THIS METHOD IS NOT USED 
-	 * Extracts NEs from a parse tree that has been augmented with NE tags.
-	 * 
-	 * @param parse a parse tree augmented with NE tags
-	 * @return NEs per NE type
-	 */
-	// TODO only works with OpenNLP taggers so far
-	@SuppressWarnings("unchecked")
-	public static String[][] extractNes(Parse parse) {
-		// initialize dynamic arrays
-		ArrayList[] nes = new ArrayList[finders.length];
-		for (int i = 0; i < nes.length; i++) nes[i] = new ArrayList();
-		
-		// depth-first search on the parse tree
-		extractNesRec(parse, nes);
-		
-		// copy to static arrays
-		String[][] results = new String[finders.length][];
-		for (int i = 0; i < nes.length; i++)
-			results[i] = (String[]) nes[i].toArray(new String[nes[i].size()]);
-		
-		return results;
-	}
+//	/** THIS METHOD IS NOT USED
+//	 * Extracts NEs from a parse tree that has been augmented with NE tags.
+//	 *
+//	 * @param parse a parse tree augmented with NE tags
+//	 * @return NEs per NE type
+//	 */
+//	// TODO only works with OpenNLP taggers so far
+//	@SuppressWarnings("unchecked")
+//	public static String[][] extractNes(Parse parse) {
+//		// initialize dynamic arrays
+//		ArrayList[] nes = new ArrayList[finders.length];
+//		for (int i = 0; i < nes.length; i++) nes[i] = new ArrayList();
+//
+//		// depth-first search on the parse tree
+//		extractNesRec(parse, nes);
+//
+//		// copy to static arrays
+//		String[][] results = new String[finders.length][];
+//		for (int i = 0; i < nes.length; i++)
+//			results[i] = (String[]) nes[i].toArray(new String[nes[i].size()]);
+//
+//		return results;
+//	}
 }
