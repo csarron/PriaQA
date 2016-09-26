@@ -261,18 +261,18 @@ public class PatternLearner {
         return Search.doSearch(queries);
     }
 
-    /**
-     * Extracts answer patterns from the text passages in the search results.
-     *
-     * @param results search results
-     */
-    private static void extractPatterns(Result[] results) {
-        String as;
-        for (Result result : results) {
-            as = ass.get(result.getQuery().getQueryString());
-            PatternExtractor.extract(result, as);
-        }
-    }
+//    /**
+//     * Extracts answer patterns from the text passages in the search results.
+//     *
+//     * @param results search results
+//     */
+//    private static void extractPatterns(Result[] results) {
+//        String as;
+//        for (Result result : results) {
+//            as = ass.get(result.getQuery().getQueryString());
+//            PatternExtractor.extract(result, as);
+//        }
+//    }
 
     /**
      * Saves answer patterns to resource files.
@@ -443,38 +443,38 @@ public class PatternLearner {
         return interpretQuestions("res/patternlearning/interpretations");
     }
 
-    /**
-     * Loads target-context-answer-regex tuples from resource files, forms
-     * queries, fetches text passages, extracts answer patterns and writes them
-     * to resource files.
-     *
-     * @return <code>true</code>, iff the answer patterns could be extracted
-     */
-    public static boolean extract() {
-        // load tuples and form queries
-        MsgPrinter.printFormingQueries();
-        ass = new Hashtable<String, String>();
-        regexs = new Hashtable<String, String>();
-        Query[] queries;
-        ArrayList<Query> queryList = new ArrayList<Query>();
-        queries = formQueries("res/patternlearning/interpretations");
-        for (Query query : queries) queryList.add(query);
-        queries = formQueries("res/patternlearning/interpretations_extract");
-        for (Query query : queries) queryList.add(query);
-        queries = queryList.toArray(new Query[queryList.size()]);
-
-        // fetch text passages
-        MsgPrinter.printFetchingPassages();
-        Result[] results = fetchPassages(queries);
-
-        // extract answer patterns
-        MsgPrinter.printExtractingPatterns();
-        extractPatterns(results);
-
-        // save answer patterns
-        MsgPrinter.printSavingPatterns();
-        return savePatterns("res/patternlearning/answerpatterns_extract");
-    }
+//    /**
+//     * Loads target-context-answer-regex tuples from resource files, forms
+//     * queries, fetches text passages, extracts answer patterns and writes them
+//     * to resource files.
+//     *
+//     * @return <code>true</code>, iff the answer patterns could be extracted
+//     */
+//    public static boolean extract() {
+//        // load tuples and form queries
+//        MsgPrinter.printFormingQueries();
+//        ass = new Hashtable<String, String>();
+//        regexs = new Hashtable<String, String>();
+//        Query[] queries;
+//        ArrayList<Query> queryList = new ArrayList<Query>();
+//        queries = formQueries("res/patternlearning/interpretations");
+//        for (Query query : queries) queryList.add(query);
+//        queries = formQueries("res/patternlearning/interpretations_extract");
+//        for (Query query : queries) queryList.add(query);
+//        queries = queryList.toArray(new Query[queryList.size()]);
+//
+//        // fetch text passages
+//        MsgPrinter.printFetchingPassages();
+//        Result[] results = fetchPassages(queries);
+//
+//        // extract answer patterns
+//        MsgPrinter.printExtractingPatterns();
+//        extractPatterns(results);
+//
+//        // save answer patterns
+//        MsgPrinter.printSavingPatterns();
+//        return savePatterns("res/patternlearning/answerpatterns_extract");
+//    }
 
     /**
      * Loads target-context-answer-regex tuples and answer patterns from
@@ -558,18 +558,18 @@ public class PatternLearner {
 //		}
 
         // initialize the system
-        init();
+//        init();
 
         // interpret TREC data
 //		interpret(args[0], args[1], args[2]);
 
         // extract answer patterns
-        extract();
+//        extract();
 
         // assess answer patterns
-        assess();
+//        assess();
 
         // filter answer patterns
-        filter();
+//        filter();
     }
 }

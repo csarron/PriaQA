@@ -1,5 +1,7 @@
 package info.ephyra.answerselection.filters;
 
+import com.google.gson.Gson;
+
 import info.ephyra.answerselection.AnswerPattern;
 import info.ephyra.io.MsgPrinter;
 import info.ephyra.nlp.NETagger;
@@ -305,19 +307,24 @@ public class AnswerPatternFilter extends Filter {
                 }*/
 
         // extract named entities
-        String[][][] nes = NETagger.extractNes(tokens);
+        String neStr = result.getNe();
+//        System.out.println("sen len:\n"+ sentences.length);
+//        System.out.println("neStr: \n"+ neStr);
+        String[][][] nes = new Gson().fromJson(neStr, String[][][].class);
+//        System.out.println("nes len: \n"+ nes.length);
 
-        // pw.printf("%s ----- %s\n", tokens.toString(), nes.toString());
-                
-                /*PrintWriter pw2 = null;   
-                try {
-                    pw2 = new PrintWriter(new FileOutputStream(new File("regex_data.txt"),true));
-                } catch (FileNotFoundException ex) {
-                    System.out.println("File not found exception!!");
-                }*/
+        // offline failed for this result
+        if (nes.length != sentences.length) {
+            MsgPrinter.printErrorMsgTimestamp("offline failed for: "+ result.getDocID());
+            nes = NETagger.extractNes(tokens);
+        }else{
+            MsgPrinter.printErrorMsgTimestamp("successfully use json");
+        }
+//        System.out.println("answer: "+ answer);
 
         for (int i = 0; i < sentences.length; i++) {
             // prepare sentence for answer extraction
+//            System.out.println("i: "+ i);
             sentences[i] = prepSentence(sentences[i], to, cos, nes[i]);
             if (sentences[i] == null) continue;
 

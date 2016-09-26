@@ -3,10 +3,18 @@ package info.ephyra.search.searchers;
 import info.ephyra.io.MsgPrinter;
 import info.ephyra.search.Result;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import lemurproject.indri.ParsedDocument;
 import lemurproject.indri.QueryEnvironment;
@@ -230,6 +238,7 @@ public class IndriKM extends KnowledgeMiner {
             MsgPrinter.printStatusMsg("3.2.1 Getting answers....searching...result len: " + results.length);
             // get passages and document numbers
             String[] passages = new String[results.length];
+            String[] neStrs = new String[results.length];
             for (int i = 0; i < results.length; i += MAX_DOCS) {
                 // fetch MAX_DOCS documents at a time (for memory efficiency)
                 ScoredExtentResult[] partResults =
@@ -246,32 +255,40 @@ public class IndriKM extends KnowledgeMiner {
                     int byteEnd = documents[j].positions[passageEnd - 1].end;
 
                     byte[] doc = documents[j].text.getBytes("UTF-8");
-//					byte[] p = new byte[byteEnd - byteBegin];
-//					for (int offset = byteBegin; offset < byteEnd; offset++)
-//						p[offset - byteBegin] = doc[offset];
                     passages[j + i] = new String(doc, byteBegin, byteEnd - byteBegin);
-//					passages[j+i] = new String(p);
 
-//					passages[j+i] = documents[j].text.substring(byteBegin, byteEnd);
+                    // parse ne field
+                    String content = documents[j].content;
+                    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                    String xmlFileString = "<ROOT>" + content + "</ROOT>";
+//                    System.out.println("xml String: \n "+xmlFileString);
+                    Document document = docBuilder.parse(
+                            new InputSource(new StringReader(xmlFileString)));
+                    NodeList docs = document.getElementsByTagName("NE");
+                    if (docs.getLength() > 0) {
+                        Node docNode = docs.item(0);
+//                        System.out.println("neNODE: \n"+docNode);
+//                        String neStr = docNode.getTextContent(); //not work due to old dependency
+//                        System.out.println("neStr: \n"+neStr);
 
-//					// align passage with paragraph tags
-//					String docText = documents[j].text;
-//					while (byteBegin > docText.length() ||
-//							!docText.substring(byteBegin - 3, byteBegin).equals("<P>"))
-//						byteBegin--;
-//					passages[j+i] =
-//						docText.substring(byteBegin).split("</P>", 2)[0].trim();
+                        // see http://stackoverflow.com/a/14016460/4105935
+                        neStrs [j+i] = docNode.getFirstChild().getNodeValue();
+                    }else{
+                        MsgPrinter.printErrorMsgTimestamp("ne field not found");
+                    }
+//                    System.out.println(neStr);
                 }
             }
             String[] docNos = env.documentMetadata(results, "docno");
-            MsgPrinter.printStatusMsg("searching results docNos=========>>>>>:" + Arrays.toString(docNos));
+//            MsgPrinter.printStatusMsg("searching results docNos=========>>>>>:" + Arrays.toString(docNos));
 //            System.out.println("passages:=========>>>>>:"+ Arrays.toString(passages));
 
             // close query environment
             env.close();
 
             // return results
-            return getResults(passages, docNos, false);
+            return getResults(passages, neStrs, docNos, false);
         } catch (Exception e) {
             MsgPrinter.printSearchError(e);  // print search error message
 

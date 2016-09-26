@@ -116,6 +116,12 @@ public class Result implements Comparable<Result>, Serializable {
     private ArrayList<String> coveredNuggets = new ArrayList<String>();
 
     /**
+     * offline ne field of the result
+     *
+     */
+    private String ne;
+
+    /**
      * Creates a <code>Result</code> object and sets the answer string.
      *
      * @param answer answer string
@@ -614,5 +620,13 @@ public class Result implements Comparable<Result>, Serializable {
         for (Iterator<Float> iter = this.extraScores.values().iterator(); iter.hasNext(); i++)
             scores[i] = iter.next().floatValue();
         return scores;
+    }
+
+    public String getNe() {
+        return ne;
+    }
+
+    public void setNe(String ne) {
+        this.ne = ne;
     }
 }

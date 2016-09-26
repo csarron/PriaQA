@@ -53,9 +53,9 @@ public abstract class KnowledgeMiner extends Searcher {
      * @param isHtml   flag indicating that the passages are HTML code
      * @return <code>Result</code> objects
      */
-    protected Result[] getResults(String[] passages, String[] docIDs,
+    protected Result[] getResults(String[] passages,String[] neStrs, String[] docIDs,
                                   boolean isHtml) {
-        return getResults(passages, docIDs, new String[docIDs.length], isHtml);
+        return getResults(passages, neStrs, docIDs, new String[docIDs.length], isHtml);
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class KnowledgeMiner extends Searcher {
      * @param isHtml   flag indicating that the passages are HTML code
      * @return <code>Result</code> objects
      */
-    protected Result[] getResults(String[] passages, String[] docIDs,
+    protected Result[] getResults(String[] passages, String[] neStrs, String[] docIDs,
                                   String[] cacheIDs, boolean isHtml) {
         ArrayList<Result> results = new ArrayList<Result>();
 
@@ -91,6 +91,7 @@ public abstract class KnowledgeMiner extends Searcher {
                     if (passage.length() > 0) {
                         Result result = new Result(passage, query, docIDs[i],
                                 i + firstResult - 1);
+                        result.setNe(neStrs[i]);
                         result.setCacheID(cacheIDs[i]);
                         // result is never returned by the QA engine but is only
                         // used to derive other results

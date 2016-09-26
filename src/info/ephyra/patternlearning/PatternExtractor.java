@@ -1,11 +1,7 @@
 package info.ephyra.patternlearning;
 
-import info.ephyra.answerselection.filters.AnswerPatternFilter;
 import info.ephyra.nlp.NETagger;
-import info.ephyra.nlp.OpenNLP;
-import info.ephyra.questionanalysis.QuestionInterpretation;
 import info.ephyra.questionanalysis.QuestionInterpreter;
-import info.ephyra.search.Result;
 import info.ephyra.util.RegexConverter;
 import info.ephyra.util.StringUtils;
 
@@ -319,57 +315,57 @@ public class PatternExtractor {
         return gens.toArray(new String[gens.size()]);
     }
 
-    /**
-     * Extracts answer patterns from the answer string of a <code>Result</code>
-     * object and adds them to the <code>AnswerPatternFilter</code>.
-     *
-     * @param result <code>Result</code> object
-     * @param as     the answer to the question
-     */
-    public static void extract(Result result, String as) {
-        // get interpretation and answer string
-        QuestionInterpretation qi = result.getQuery().getInterpretation();
-        String to = qi.getTarget();
-//		String[] cos = qi.getContext();
-        String[] cos = new String[0];  // CONTEXT objects are ignored
-        String prop = qi.getProperty();
-        String answer = result.getAnswer();
-
-        // tokenize interpretation and provided answer, convert to lower-case
-        to = NETagger.tokenizeWithSpaces(to).toLowerCase();
-        for (int i = 0; i < cos.length; i++)
-            cos[i] = NETagger.tokenizeWithSpaces(cos[i]).toLowerCase();
-        as = NETagger.tokenizeWithSpaces(as).toLowerCase();
-        // split answer string into sentences and tokenize sentences
-        String[] sentences = OpenNLP.sentDetect(answer);
-        String[][] tokens = new String[sentences.length][];
-        for (int i = 0; i < sentences.length; i++) {
-            tokens[i] = NETagger.tokenize(sentences[i]);
-            sentences[i] = StringUtils.concatWithSpaces(tokens[i]);
-        }
-        // extract named entities
-        String[][][] nes = NETagger.extractNes(tokens);
-        // convert sentences and named entities to lower-case
-        for (int i = 0; i < nes.length; i++) {
-            sentences[i] = sentences[i].toLowerCase();
-            for (int j = 0; j < nes[i].length; j++)
-                for (int k = 0; k < nes[i][j].length; k++)
-                    nes[i][j][k] = nes[i][j][k].toLowerCase();
-        }
-
-        for (int i = 0; i < sentences.length; i++) {
-            // prepare sentence for pattern extraction
-            sentences[i] = prepSentence(sentences[i], to, cos, as, nes[i]);
-            if (sentences[i] == null) continue;
-
-            // extract patterns
-            String[] patterns = extractPatterns(sentences[i]);
-            // generalize patterns
-            patterns = generalizePatterns(patterns, prop);
-
-            // add patterns
-            for (String pattern : patterns)
-                AnswerPatternFilter.addPattern(pattern, prop);
-        }
-    }
+//    /**
+//     * Extracts answer patterns from the answer string of a <code>Result</code>
+//     * object and adds them to the <code>AnswerPatternFilter</code>.
+//     *
+//     * @param result <code>Result</code> object
+//     * @param as     the answer to the question
+//     */
+//    public static void extract(Result result, String as) {
+//        // get interpretation and answer string
+//        QuestionInterpretation qi = result.getQuery().getInterpretation();
+//        String to = qi.getTarget();
+////		String[] cos = qi.getContext();
+//        String[] cos = new String[0];  // CONTEXT objects are ignored
+//        String prop = qi.getProperty();
+//        String answer = result.getAnswer();
+//
+//        // tokenize interpretation and provided answer, convert to lower-case
+//        to = NETagger.tokenizeWithSpaces(to).toLowerCase();
+//        for (int i = 0; i < cos.length; i++)
+//            cos[i] = NETagger.tokenizeWithSpaces(cos[i]).toLowerCase();
+//        as = NETagger.tokenizeWithSpaces(as).toLowerCase();
+//        // split answer string into sentences and tokenize sentences
+//        String[] sentences = OpenNLP.sentDetect(answer);
+//        String[][] tokens = new String[sentences.length][];
+//        for (int i = 0; i < sentences.length; i++) {
+//            tokens[i] = NETagger.tokenize(sentences[i]);
+//            sentences[i] = StringUtils.concatWithSpaces(tokens[i]);
+//        }
+//        // extract named entities
+//        String[][][] nes = NETagger.extractNes(tokens);
+//        // convert sentences and named entities to lower-case
+//        for (int i = 0; i < nes.length; i++) {
+//            sentences[i] = sentences[i].toLowerCase();
+//            for (int j = 0; j < nes[i].length; j++)
+//                for (int k = 0; k < nes[i][j].length; k++)
+//                    nes[i][j][k] = nes[i][j][k].toLowerCase();
+//        }
+//
+//        for (int i = 0; i < sentences.length; i++) {
+//            // prepare sentence for pattern extraction
+//            sentences[i] = prepSentence(sentences[i], to, cos, as, nes[i]);
+//            if (sentences[i] == null) continue;
+//
+//            // extract patterns
+//            String[] patterns = extractPatterns(sentences[i]);
+//            // generalize patterns
+//            patterns = generalizePatterns(patterns, prop);
+//
+//            // add patterns
+//            for (String pattern : patterns)
+//                AnswerPatternFilter.addPattern(pattern, prop);
+//        }
+//    }
 }
