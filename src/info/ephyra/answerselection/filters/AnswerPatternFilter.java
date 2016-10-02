@@ -310,13 +310,16 @@ public class AnswerPatternFilter extends Filter {
         String neStr = result.getNe();
 //        System.out.println("sen len:\n"+ sentences.length);
 //        System.out.println("neStr: \n"+ neStr);
-        String[][][] nes = new Gson().fromJson(neStr, String[][][].class);
+        Gson gson=new Gson();
+        String[][][] nes = gson.fromJson(neStr, String[][][].class);
 //        System.out.println("nes len: \n"+ nes.length);
 
         // offline failed for this result
         if (nes.length != sentences.length) {
-            MsgPrinter.printErrorMsgTimestamp("offline failed for: "+ result.getDocID());
+            MsgPrinter.printErrorMsgTimestamp("failed for: "+ result.getDocID());
+            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
             nes = NETagger.extractNes(tokens);
+            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
         }else{
             MsgPrinter.printErrorMsgTimestamp("successfully use json");
         }

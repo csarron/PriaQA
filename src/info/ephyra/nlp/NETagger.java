@@ -16,7 +16,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -43,14 +42,14 @@ public class NETagger {
     /**
      * Name finders from the OpenNLP project, created from different models.
      */
-    private static NameFinder[] finders = new NameFinder[0];
+//    private static NameFinder[] finders = new NameFinder[0];
 
     /**
      * NE types that are recognized by the OpenNLP name finders. There may be
      * multiple taggers for the same NE type. IMPORTANT: NE types must be
      * prefix-free.
      */
-    private static String[] finderNames = new String[0];
+//    private static String[] finderNames = new String[0];
 
     /**
      * NE types that are recognized by the Stanford NE tagger. There may be
@@ -204,9 +203,9 @@ public class NETagger {
 
         ArrayList<String> quantityPatternNameList = new ArrayList<String>();
         ArrayList<Pattern> quantityPatternList = new ArrayList<Pattern>();
-        ArrayList<Integer> quantityPatternMaxTokensList = new ArrayList<Integer>();
+//        ArrayList<Integer> quantityPatternMaxTokensList = new ArrayList<Integer>();
 
-        ArrayList<String> quantityUnitPatternNameList = new ArrayList<String>();
+//        ArrayList<String> quantityUnitPatternNameList = new ArrayList<String>();
         ArrayList<Pattern> quantityUnitPatternList = new ArrayList<Pattern>();
         ArrayList<Integer> quantityUnitPatternMaxTokensList = new ArrayList<Integer>();
 
@@ -235,7 +234,7 @@ public class NETagger {
                     Pattern pattern = ((Pattern) patternField.get(null));
                     int maxTokens = maxTokensField.getInt(null);
 
-                    boolean isQuantity = ((regEx.indexOf(RegExMatcher.NUMBER) != -1) && !regEx.equals(RegExMatcher.NUMBER));
+                    boolean isQuantity = ((regEx.contains(RegExMatcher.NUMBER)) && !regEx.equals(RegExMatcher.NUMBER));
 
                     if (isQuantity) {
                         try {
@@ -249,12 +248,12 @@ public class NETagger {
                             int unitMaxTokens = unitMaxTokensField.getInt(null);
 
                             quantityPatternNameList.add(neName);
-                            quantityPatternList.add(pattern);
-                            quantityPatternMaxTokensList.add(new Integer(maxTokens));
+//                            quantityPatternList.add(pattern);
+//                            quantityPatternMaxTokensList.add(new Integer(maxTokens));
 
-                            quantityUnitPatternNameList.add(neName);
+//                            quantityUnitPatternNameList.add(neName);
                             quantityUnitPatternList.add(unitPattern);
-                            quantityUnitPatternMaxTokensList.add(new Integer(unitMaxTokens));
+                            quantityUnitPatternMaxTokensList.add(unitMaxTokens);
                         } catch (Exception e) {
                             isQuantity = false;
                         }
@@ -263,7 +262,7 @@ public class NETagger {
                     if (!isQuantity) {
                         patternNameList.add(neName);
                         patternList.add(pattern);
-                        patternMaxTokensList.add(new Integer(maxTokens));
+                        patternMaxTokensList.add(maxTokens);
                     }
 
                     MsgPrinter.printStatusMsg("    ...for " + neName);
@@ -278,17 +277,17 @@ public class NETagger {
             for (int p = 0; p < patternNameList.size(); p++) {
                 patternNames[p] = patternNameList.get(p);
                 patterns[p] = patternList.get(p);
-                patternMaxTokens[p] = patternMaxTokensList.get(p).intValue();
+                patternMaxTokens[p] = patternMaxTokensList.get(p);
             }
 
             quantityPatternNames = new String[quantityPatternNameList.size()];
-            quantityPatterns = new Pattern[quantityPatternList.size()];
+//            quantityPatterns = new Pattern[quantityPatternList.size()];
             quantityUnitPatterns = new Pattern[quantityUnitPatternList.size()];
 //			quantityPatternMaxTokens = new int[quantityPatternMaxTokensList.size()];
             quantityUnitPatternMaxTokens = new int[quantityUnitPatternMaxTokensList.size()];
             for (int p = 0; p < quantityPatternNameList.size(); p++) {
                 quantityPatternNames[p] = quantityPatternNameList.get(p);
-                quantityPatterns[p] = quantityPatternList.get(p);
+//                quantityPatterns[p] = quantityPatternList.get(p);
                 quantityUnitPatterns[p] = quantityUnitPatternList.get(p);
 //				quantityPatternMaxTokens[p] = quantityPatternMaxTokensList.get(p);
                 quantityUnitPatternMaxTokens[p] = quantityUnitPatternMaxTokensList.get(p);
@@ -298,7 +297,7 @@ public class NETagger {
         }
 
         allPatternNames = new String[patterns.length + 1 + quantityUnitPatterns.length];
-        for (int i = 0; i < patternNames.length; i++) allPatternNames[i] = patternNames[i];
+        System.arraycopy(patternNames, 0, allPatternNames, 0, patternNames.length);
         allPatternNames[patternNames.length] = "NEnumber";
         for (int i = 0; i < quantityPatternNames.length; i++)
             allPatternNames[patternNames.length + i + 1] = quantityPatternNames[i];
@@ -326,8 +325,8 @@ public class NETagger {
     public static String getNeType(int neId) {
         if (neId < 0) return null;
 
-        if (neId < finderNames.length) return finderNames[neId];
-        neId -= finderNames.length;
+//        if (neId < finderNames.length) return finderNames[neId];
+//        neId -= finderNames.length;
 
         if (neId < allPatternNames.length) return allPatternNames[neId];
         neId -= allPatternNames.length;
@@ -350,21 +349,21 @@ public class NETagger {
     public static int[] getNeIds(String neType) {
         ArrayList<Integer> idList = new ArrayList<Integer>();
 
-        for (int i = 0; i < finderNames.length; i++)
-            if (finderNames[i].equals(neType))
-                idList.add(i);
+//        for (int i = 0; i < finderNames.length; i++)
+//            if (finderNames[i].equals(neType))
+//                idList.add(i);
 
         for (int i = 0; i < allPatternNames.length; i++)
             if (allPatternNames[i].equals(neType))
-                idList.add(finderNames.length + i);
+                idList.add(i);
 
         for (int i = 0; i < listNames.length; i++)
             if (listNames[i].equals(neType))
-                idList.add(finderNames.length + allPatternNames.length + i);
+                idList.add(allPatternNames.length + i);
 
         for (int i = 0; i < stanfordNames.length; i++)
             if (stanfordNames[i].equals(neType))
-                idList.add(finderNames.length + allPatternNames.length + listNames.length + i);
+                idList.add(allPatternNames.length + listNames.length + i);
 
         int[] ids = new int[idList.size()];
         for (int i = 0; i < ids.length; i++) ids[i] = idList.get(i);
@@ -737,47 +736,47 @@ public class NETagger {
         String[][][] nes = new String[sentences.length][][];
 
         // initialize prevTokenMaps
-        Map[] prevTokenMaps = new HashMap[finders.length];
-        for (int i = 0; i < finders.length; i++)
-            prevTokenMaps[i] = new HashMap();
+//		Map[] prevTokenMaps = new HashMap[finders.length];
+//		for (int i = 0; i < finders.length; i++)
+//			prevTokenMaps[i] = new HashMap();
 
         for (int s = 0; s < sentences.length; s++) {
             String[] tokens = sentences[s];
-            nes[s] = new String[finders.length + allPatternNames.length + lists.length + stanfordNames.length][];
+            nes[s] = new String[allPatternNames.length + lists.length + stanfordNames.length][];
 
-            // find named entities
-            String[][] finderTags = new String[finders.length][];
-            for (int i = 0; i < finders.length; i++)
-                finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
-
-            // update prevTokenMaps
-            for (int i = 0; i < prevTokenMaps.length; i++)
-                for (int j = 0; j < tokens.length; j++)
-                    prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
-
-            // extract named entities
-            for (int i = 0; i < finders.length; i++) {
-                ArrayList<String> neList = new ArrayList<String>();
-
-                String ne = "";
-                for (int j = 0; j < tokens.length; j++) {
-                    if ((finderTags[i][j].equals(NameFinderME.START) ||
-                            finderTags[i][j].equals(NameFinderME.OTHER)) &&
-                            ne.length() > 0) {
-                        neList.add(ne.trim());
-                        ne = "";
-                    }
-
-                    if (finderTags[i][j].equals(NameFinderME.START))
-                        ne = tokens[j];
-
-                    if (finderTags[i][j].equals(NameFinderME.CONTINUE))
-                        ne += " " + tokens[j];
-                }
-                if (ne.length() > 0) neList.add(ne);
-
-                nes[s][i] = neList.toArray(new String[neList.size()]);
-            }
+//			// find named entities
+//			String[][] finderTags = new String[finders.length][];
+//			for (int i = 0; i < finders.length; i++)
+//				finderTags[i] = finders[i].find(tokens, prevTokenMaps[i]);
+//
+//			// update prevTokenMaps
+//			for (int i = 0; i < prevTokenMaps.length; i++)
+//				for (int j = 0; j < tokens.length; j++)
+//					prevTokenMaps[i].put(tokens[j], finderTags[i][j]);
+//
+//			// extract named entities
+//			for (int i = 0; i < finders.length; i++) {
+//				ArrayList<String> neList = new ArrayList<String>();
+//
+//				String ne = "";
+//				for (int j = 0; j < tokens.length; j++) {
+//					if ((finderTags[i][j].equals(NameFinderME.START) ||
+//						finderTags[i][j].equals(NameFinderME.OTHER)) &&
+//						ne.length() > 0) {
+//						neList.add(ne.trim());
+//						ne = "";
+//					}
+//
+//					if (finderTags[i][j].equals(NameFinderME.START))
+//						ne = tokens[j];
+//
+//					if (finderTags[i][j].equals(NameFinderME.CONTINUE))
+//						ne += " " + tokens[j];
+//				}
+//		        if (ne.length() > 0) neList.add(ne);
+//
+//		        nes[s][i] = neList.toArray(new String[neList.size()]);
+//			}
 
             // apply regular expressions
             String[][] regExTags = new String[allPatternNames.length][];
@@ -796,7 +795,7 @@ public class NETagger {
                 regExTags[patterns.length + i + 1] = RegExMatcher.extractQuantities(tokens, numberMarkers, quantityUnitPatterns[i], quantityUnitPatternMaxTokens[i]);
 
             for (int i = 0; i < allPatternNames.length; i++) {
-                ArrayList<String> neList = new ArrayList<String>();
+                ArrayList<String> neList = new ArrayList<>();
 
                 String ne = "";
                 for (int j = 0; j < tokens.length; j++) {
@@ -815,16 +814,18 @@ public class NETagger {
                 }
                 if (ne.length() > 0) neList.add(ne);
 
-                nes[s][finders.length + i] = neList.toArray(new String[neList.size()]);
+                nes[s][i] = neList.toArray(new String[neList.size()]);
             }
 
             // apply lists
             String[][] listTags = new String[listNames.length][];
+			/* Edit distance threshold for fuzzy-lookups in dictionaries. */
+            int fuzzyListLookupThreshold = 0;
             for (int i = 0; i < lists.length; i++)
                 listTags[i] = RegExMatcher.markAllContained(tokens, RegExMatcher.getDictionary(lists[i]), fuzzyListLookupThreshold);
 
             for (int i = 0; i < lists.length; i++) {
-                ArrayList<String> neList = new ArrayList<String>();
+                ArrayList<String> neList = new ArrayList<>();
 
                 String ne = "";
                 for (int j = 0; j < tokens.length; j++) {
@@ -843,10 +844,10 @@ public class NETagger {
                 }
                 if (ne.length() > 0) neList.add(ne);
 
-                nes[s][finders.length + allPatternNames.length + i] = neList.toArray(new String[neList.size()]);
+                nes[s][allPatternNames.length + i] = neList.toArray(new String[neList.size()]);
             }
 
-                    /*    PrintWriter pw = null;   
+                    /*    PrintWriter pw = null;
                         try {
                             pw = new PrintWriter(new FileOutputStream(new File("StanfordNeTagger_data.txt"),true));
                         } catch (FileNotFoundException ex) {
@@ -856,7 +857,7 @@ public class NETagger {
             //	apply stanford tagger
 //            System.out.println(">>>>>>>>>>>AnswerPatternFilter Applying Stanford NER>>>>>>>>>");
 
-            HashMap<String, String[]> allStanfordNEs = StanfordNeTagger.extractNEs(StringUtils.concatWithSpaces(sentences[s]));
+            HashMap<String, String[]> allStanfordNEs = StanfordNeTagger.extractNEs(concatWithSpaces(sentences[s]));
 
             //pw.printf("%s\n", StringUtils.concatWithSpaces(sentences[s]));
             //  pw.printf("%s ----- %s\n", StringUtils.concatWithSpaces(sentences[s]), nes.toString());
@@ -864,12 +865,21 @@ public class NETagger {
             for (int i = 0; i < stanfordNames.length; i++) {
                 String[] stanfordNEs = allStanfordNEs.get(stanfordNames[i]);
                 if (stanfordNEs == null) stanfordNEs = new String[0];
-                nes[s][finders.length + allPatternNames.length + lists.length + i] = stanfordNEs;
+                nes[s][allPatternNames.length + lists.length + i] = stanfordNEs;
             }
             //pw.close();
         }
 
         return nes;
+    }
+
+    static String concatWithSpaces(String[] tokens) {
+        String s = "";
+
+        if (tokens.length > 0) s += tokens[0];
+        for (int i = 1; i < tokens.length; i++) s += " " + tokens[i];
+
+        return s;
     }
 
     /**
@@ -881,49 +891,50 @@ public class NETagger {
      */
     @SuppressWarnings("unchecked")
     public static String[][] extractNes(String[][] sentences, int neId) {
-        if (neId < 0 || neId >= finderNames.length + allPatternNames.length + listNames.length + stanfordNames.length)
+        if (neId < 0 || neId >= allPatternNames.length + listNames.length + stanfordNames.length)
             return null;  // invalid ID
 
         String[][] nes = new String[sentences.length][];
 
-        if (neId < finderNames.length) {
-            // initialize prevTokenMap
-            Map prevTokenMap = new HashMap();
-
-            for (int s = 0; s < sentences.length; s++) {
-                String[] tokens = sentences[s];
-
-                // find named entities
-                String[] tags = finders[neId].find(tokens, prevTokenMap);
-
-                // update prevTokenMap
-                for (int i = 0; i < tokens.length; i++)
-                    prevTokenMap.put(tokens[i], tags[i]);
-
-                // extract named entities
-                ArrayList<String> neList = new ArrayList<String>();
-                String ne = "";
-                for (int i = 0; i < tokens.length; i++) {
-                    if ((tags[i].equals(NameFinderME.START) ||
-                            tags[i].equals(NameFinderME.OTHER)) &&
-                            ne.length() > 0) {
-                        neList.add(ne.trim());
-                        ne = "";
-                    }
-
-                    if (tags[i].equals(NameFinderME.START))
-                        ne = tokens[i];
-
-                    if (tags[i].equals(NameFinderME.CONTINUE))
-                        ne += " " + tokens[i];
-                }
-                if (ne.length() > 0) neList.add(ne);
-
-                nes[s] = neList.toArray(new String[neList.size()]);
-            }
+        if (neId < 0) {
+            MsgPrinter.printErrorMsgTimestamp("finders do exist!!!");
+//            // initialize prevTokenMap
+//            Map prevTokenMap = new HashMap();
+//
+//            for (int s = 0; s < sentences.length; s++) {
+//                String[] tokens = sentences[s];
+//
+//                // find named entities
+//                String[] tags = finders[neId].find(tokens, prevTokenMap);
+//
+//                // update prevTokenMap
+//                for (int i = 0; i < tokens.length; i++)
+//                    prevTokenMap.put(tokens[i], tags[i]);
+//
+//                // extract named entities
+//                ArrayList<String> neList = new ArrayList<String>();
+//                String ne = "";
+//                for (int i = 0; i < tokens.length; i++) {
+//                    if ((tags[i].equals(NameFinderME.START) ||
+//                            tags[i].equals(NameFinderME.OTHER)) &&
+//                            ne.length() > 0) {
+//                        neList.add(ne.trim());
+//                        ne = "";
+//                    }
+//
+//                    if (tags[i].equals(NameFinderME.START))
+//                        ne = tokens[i];
+//
+//                    if (tags[i].equals(NameFinderME.CONTINUE))
+//                        ne += " " + tokens[i];
+//                }
+//                if (ne.length() > 0) neList.add(ne);
+//
+//                nes[s] = neList.toArray(new String[neList.size()]);
+//            }
         } else {
             // adjust ID
-            int i = neId - finderNames.length;
+            int i = neId ;
 
             if (i < allPatternNames.length) {
 
