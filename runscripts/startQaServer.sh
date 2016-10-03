@@ -37,7 +37,15 @@ export CLASSPATH=bin:lib/ml/maxent.jar:lib/ml/minorthird.jar:lib/nlp/jwnl.jar:li
 #export INDRI_INDEX=/home/qqcao/wikidata/enwiki-index/
 export INDRI_INDEX=/home/qingqing/wikidata/enwiki-index-ne/
 #export INDRI_INDEX=/home/qingqing/wikidata/enwiki-index/
-export THREADS=$(cat /proc/cpuinfo | grep processor | wc -l)
+
+os=`uname`
+if [[ "$os" == "Darwin" ]]; then
+    # macOS
+    export THREADS=$(sysctl -n hw.ncpu)
+else
+    # assume others are Linux
+    export THREADS=$(cat /proc/cpuinfo | grep processor | wc -l)
+fi
 
 #java -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m  info.ephyra.OpenEphyraServer $ip $port
 
@@ -49,5 +57,6 @@ java -Djava.rmi.server.hostname=$ip \
     -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m  \
      info.ephyra.OpenEphyraServer $ip $port
 #java -agentpath:/home/qqcao/jprof/bin/linux-x64/libjprofilerti.so=port=8849,nowait \
+#     -agentlib:hprof=cpu=samples,depth=100,interval=7,lineno=y,thread=y,file=output.hprof \
 #     -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m  \
 #     info.ephyra.OpenEphyraServer $ip $port

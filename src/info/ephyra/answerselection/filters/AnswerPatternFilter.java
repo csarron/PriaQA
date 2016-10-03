@@ -316,7 +316,7 @@ public class AnswerPatternFilter extends Filter {
 
         // offline failed for this result
         if (nes.length != sentences.length) {
-            MsgPrinter.printErrorMsgTimestamp("failed for: "+ result.getDocID());
+            MsgPrinter.printStatusMsg("failed for: "+ result.getDocID());
             MsgPrinter.printErrorMsg("offline ne: " +  neStr);
             nes = NETagger.extractNes(tokens);
             MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
