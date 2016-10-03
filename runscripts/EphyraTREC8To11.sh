@@ -15,4 +15,4 @@ cd ..
 
 java -server -Xms1000m -Xmx1400m -Djava.library.path=lib/search/ \
      info.ephyra.trec.EphyraTREC8To11 res/testdata/trec/$1questions \
-     res/testdata/trec/$1patterns log=log/$1_$2
+     res/testdata/trec/$1patterns log=log/$1_$2 -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=60060
