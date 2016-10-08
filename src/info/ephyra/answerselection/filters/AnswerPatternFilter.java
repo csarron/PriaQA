@@ -310,18 +310,42 @@ public class AnswerPatternFilter extends Filter {
         String neStr = result.getNe();
 //        System.out.println("sen len:\n"+ sentences.length);
 //        System.out.println("neStr: \n"+ neStr);
-        Gson gson=new Gson();
-        String[][][] nes = gson.fromJson(neStr, String[][][].class);
+        Gson gson = new Gson();
+        String[][][] nesOffline = gson.fromJson(neStr, String[][][].class);
 //        System.out.println("nes len: \n"+ nes.length);
-
+        String[][][] nes = NETagger.extractNes(tokens);
         // offline failed for this result
         if (nes.length != sentences.length) {
-            MsgPrinter.printStatusMsg("failed for: "+ result.getDocID());
+            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
 //            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
-            nes = NETagger.extractNes(tokens);
-            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
-        }else{
-//            MsgPrinter.printErrorMsgTimestamp("successfully use json");
+
+//            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
+        } else {
+            boolean failed=false;
+            level1:
+            for (int i = 0; i < nes.length; i++) {
+                if (nes[i].length != nesOffline[i].length) {
+                    MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+                    failed=true;
+                    break;
+                }
+                for (int j = 0; j < nes[i].length; j++) {
+                    if (nes[i][j].length != nesOffline[i][j].length) {
+                        MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+                        failed=true;
+                        break level1;
+                    }
+                    for (int k = 0; k < nes[i][j].length; k++) {
+                        if (!nes[i][j][k].equals(nesOffline[i][j][k])) {
+                            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+                            failed=true;
+                            break level1;
+                        }
+                    }
+                }
+            }
+            if (!failed)
+            MsgPrinter.printStatusMsg("success json: " + result.getDocID());
         }
 //        System.out.println("answer: "+ answer);
 
