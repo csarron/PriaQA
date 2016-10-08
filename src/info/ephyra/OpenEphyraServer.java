@@ -41,6 +41,7 @@ import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
 import info.ephyra.search.searchers.IndriKM;
+import info.ephyra.util.FileUtils;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
@@ -49,6 +50,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
@@ -405,6 +407,21 @@ public class OpenEphyraServer extends AbstractHandler {
 //        MsgPrinter.printSearching();
         MsgPrinter.printStatusMsg("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
+
+        File dir = new File("logs"+File.separator+"question-" + aq.getQuestion());
+        if (!dir.exists()) {
+            if (!dir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create log dir!");
+        }
+
+        for (int i = 0; i < results.length; i++) {
+            try {
+                FileUtils.writeString(results[i].getPassage(),
+                        new File(dir.getAbsolutePath()+File.separator+i+".log"), "UTF-8");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         // answer selection
 //        MsgPrinter.printSelectingAnswers();

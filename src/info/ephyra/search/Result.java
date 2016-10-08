@@ -567,6 +567,10 @@ public class Result implements Comparable<Result>, Serializable {
         return result;
     }
 
+    public String getPassage() {
+        return "docID is: \n" + docID + "\n" + "passage is: \n" + (answer) + "\n" ;
+    }
+
     @Override
     public String toString() {
         return "[query is: " + query + "\n"
@@ -583,8 +587,8 @@ public class Result implements Comparable<Result>, Serializable {
     /**
      * add an extra score to this Result for storage, extra score will not influence sorting
      *
-     * @param    sourceName    the name of the source of the score
-     * @param    score        the value of the score
+     * @param sourceName the name of the source of the score
+     * @param score      the value of the score
      */
     public void addExtraScore(String sourceName, float score) {
         this.extraScores.put(sourceName, new Float(score));
@@ -593,9 +597,9 @@ public class Result implements Comparable<Result>, Serializable {
     /**
      * retrieve the extra score set by some source
      *
+     * @param sourceName the name of the source who set the required score
      * @return the extra score set by the source with the specified name, or 0, if the is no suchh
      * extra score
-     * @param    sourceName    the name of the source who set the required score
      */
     public float getExtraScore(String sourceName) {
         if (this.extraScores.containsKey(sourceName))
