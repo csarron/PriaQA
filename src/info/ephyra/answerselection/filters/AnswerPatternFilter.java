@@ -41,6 +41,7 @@ import java.util.regex.PatternSyntaxException;
  * @version 2007-04-18
  */
 public class AnswerPatternFilter extends Filter {
+    private static Gson gson = new Gson();
     /**
      * Identifier for the pattern learning and matching approach.
      */
@@ -310,44 +311,45 @@ public class AnswerPatternFilter extends Filter {
         String neStr = result.getNe();
 //        System.out.println("sen len:\n"+ sentences.length);
 //        System.out.println("neStr: \n"+ neStr);
-        Gson gson = new Gson();
-        String[][][] nesOffline = gson.fromJson(neStr, String[][][].class);
+        String[][][] nes = gson.fromJson(neStr, String[][][].class);
 //        System.out.println("nes len: \n"+ nes.length);
-        String[][][] nes = NETagger.extractNes(tokens);
-        // offline failed for this result
-        if (nes.length != sentences.length) {
-            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
-//            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
-
-//            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
-        } else {
-            boolean failed=false;
-            level1:
-            for (int i = 0; i < nes.length; i++) {
-                if (nes[i].length != nesOffline[i].length) {
-                    MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
-                    failed=true;
-                    break;
-                }
-                for (int j = 0; j < nes[i].length; j++) {
-                    if (nes[i][j].length != nesOffline[i][j].length) {
-                        MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
-                        failed=true;
-                        break level1;
-                    }
-                    for (int k = 0; k < nes[i][j].length; k++) {
-                        if (!nes[i][j][k].equals(nesOffline[i][j][k])) {
-                            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
-                            failed=true;
-                            break level1;
-                        }
-                    }
-                }
-            }
-            if (!failed)
-            MsgPrinter.printStatusMsg("success json: " + result.getDocID());
-        }
-//        System.out.println("answer: "+ answer);
+//        String[][][] nes = NETagger.extractNes(tokens);
+//        // offline failed for this result
+//        boolean failed=false;
+//        String onlineStr = gson.toJson(nes);
+//        if (nes.length != sentences.length) {
+//            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+////            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
+//
+////            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
+//        } else {
+//            level1:
+//            for (int i = 0; i < nes.length; i++) {
+//                if (nes[i].length != nesOffline[i].length) {
+//                    MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+//                    failed=true;
+//                    break;
+//                }
+//                for (int j = 0; j < nes[i].length; j++) {
+//                    if (nes[i][j].length != nesOffline[i][j].length) {
+//                        MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+//                        failed=true;
+//                        break level1;
+//                    }
+//                    for (int k = 0; k < nes[i][j].length; k++) {
+//                        if (!nes[i][j][k].equals(nesOffline[i][j][k])) {
+//                            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+//                            failed=true;
+//                            break level1;
+//                        }
+//                    }
+//                }
+//            }
+//            if (!failed)
+//            MsgPrinter.printStatusMsg("success json: " + result.getDocID());
+//        }
+//        if (failed)
+//        System.out.println("answer: ");
 
         for (int i = 0; i < sentences.length; i++) {
             // prepare sentence for answer extraction

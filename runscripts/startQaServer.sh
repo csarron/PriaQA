@@ -35,7 +35,7 @@ export CLASSPATH=bin:lib/ml/maxent.jar:lib/ml/minorthird.jar:lib/nlp/jwnl.jar:li
 
 #export INDRI_INDEX=`pwd`/wiki_indri_index/
 #export INDRI_INDEX=/home/qqcao/wikidata/enwiki-index/
-export INDRI_INDEX=/home/qingqing/wikidata/enwiki-index-ne/
+export INDRI_INDEX=/home/qqcao/pria/wikidata/enwiki-index-doc/
 #export INDRI_INDEX=/home/qingqing/wikidata/enwiki-index/
 
 os=`uname`
@@ -55,6 +55,7 @@ java -Djava.rmi.server.hostname=$ip \
      -Dcom.sun.management.jmxremote.ssl=false \
      -Dcom.sun.management.jmxremote.authenticate=false \
     -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m  \
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005  \
      info.ephyra.OpenEphyraServer $ip $port 2>&1 | tee qaServer.log
 #java -agentpath:/home/qqcao/jprof/bin/linux-x64/libjprofilerti.so=port=8849,nowait \
 #     -agentlib:hprof=cpu=samples,depth=100,interval=7,lineno=y,thread=y,file=output.hprof \
