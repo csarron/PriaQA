@@ -61,8 +61,7 @@ public class MsgPrinter {
      * @param status a status message
      */
     public static synchronized void printStatusMsg(String status) {
-        if (statusMsgs) printMessage("timestamp: " + (System.currentTimeMillis())
-                + " " + getTimestamp() + ": " + status);
+        if (statusMsgs) printMessage(status);
     }
 
     /**
