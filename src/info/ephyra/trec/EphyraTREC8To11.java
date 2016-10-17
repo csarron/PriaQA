@@ -76,8 +76,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         float mrr = 0;
 
         for (int i = 0; i < qss.length; i++) {
-            System.out.println("Question NO:>" + i + "<===" + qss[i]);
-            MsgPrinter.printQuestion("NO:>" + i + "<" + qss[i]);
+            System.out.print("no;" + i +";" + qss[i]);
 
             Logger.enableLogging(false);
 
@@ -105,9 +104,11 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
                 }
             }
             if (firstCorrect > 0) {
-                System.out.println("correct!");
+                System.out.println(";correct!");
                 precision++;
                 mrr += ((float) 1) / firstCorrect;
+            } else {
+                System.out.println(";wrong!");
             }
 
             Logger.logResultsJudged(results, correct);

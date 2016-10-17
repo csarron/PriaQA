@@ -88,7 +88,7 @@ public class OpenEphyraServer extends AbstractHandler {
     /**
      * Maximum number of factoid answers.
      */
-    protected static final int FACTOID_MAX_ANSWERS = 1;
+    protected static final int FACTOID_MAX_ANSWERS = 50;
     /**
      * Absolute threshold for factoid answer scores.
      */
@@ -321,8 +321,7 @@ public class OpenEphyraServer extends AbstractHandler {
             if (answer != null) {
                 out.println(answer);
                 MsgPrinter.printStatusMsg(answer);
-            }
-            else
+            } else
                 out.println("Sorry, I cannot answer your question.");
 
         } else {
@@ -410,20 +409,17 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsg("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
-        File dir = new File("qaDocs" + File.separator + aq.getQuestion().replace(" ", "_"));
-        if (!dir.exists()) {
-            if (!dir.mkdirs())
-                MsgPrinter.printErrorMsg("cannot create qaDocs dir!");
+        File docTextDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
+                + File.separator + "DocText");
+        if (!docTextDir.exists()) {
+            if (!docTextDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create DocText dir!");
         }
 
         for (Result result : results) {
-            try {
-                FileUtils.writeString(result.getPassage(),
-                        new File(dir.getAbsolutePath() + File.separator +
-                                result.getDocID() + ".txt"), "UTF-8");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            FileUtils.writeString(result.getPassage(),
+                    new File(docTextDir.getAbsolutePath() + File.separator
+                            + result.getDocID() + ".txt"), false);
         }
 
         // answer selection
@@ -431,6 +427,18 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsg("3.3 Getting answers....selecting answers");
 
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
+        File candidatesDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
+                + File.separator + "Candidates");
+        if (!candidatesDir.exists()) {
+            if (!candidatesDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create Candidates Dir!");
+        }
+
+        for (Result result : results) {
+            FileUtils.writeString(result.getAnswer(),
+                    new File(candidatesDir.getAbsolutePath() + File.separator
+                            + result.getDocID() + ".txt"), true);
+        }
 
         return results;
     }
