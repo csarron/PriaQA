@@ -203,9 +203,9 @@ public class NETagger {
 
         ArrayList<String> quantityPatternNameList = new ArrayList<String>();
         ArrayList<Pattern> quantityPatternList = new ArrayList<Pattern>();
-//        ArrayList<Integer> quantityPatternMaxTokensList = new ArrayList<Integer>();
+        ArrayList<Integer> quantityPatternMaxTokensList = new ArrayList<Integer>();
 
-//        ArrayList<String> quantityUnitPatternNameList = new ArrayList<String>();
+        ArrayList<String> quantityUnitPatternNameList = new ArrayList<String>();
         ArrayList<Pattern> quantityUnitPatternList = new ArrayList<Pattern>();
         ArrayList<Integer> quantityUnitPatternMaxTokensList = new ArrayList<Integer>();
 
@@ -248,10 +248,10 @@ public class NETagger {
                             int unitMaxTokens = unitMaxTokensField.getInt(null);
 
                             quantityPatternNameList.add(neName);
-//                            quantityPatternList.add(pattern);
-//                            quantityPatternMaxTokensList.add(new Integer(maxTokens));
+                            quantityPatternList.add(pattern);
+                            quantityPatternMaxTokensList.add(maxTokens);
 
-//                            quantityUnitPatternNameList.add(neName);
+                            quantityUnitPatternNameList.add(neName);
                             quantityUnitPatternList.add(unitPattern);
                             quantityUnitPatternMaxTokensList.add(unitMaxTokens);
                         } catch (Exception e) {
@@ -281,13 +281,13 @@ public class NETagger {
             }
 
             quantityPatternNames = new String[quantityPatternNameList.size()];
-//            quantityPatterns = new Pattern[quantityPatternList.size()];
+            quantityPatterns = new Pattern[quantityPatternList.size()];
             quantityUnitPatterns = new Pattern[quantityUnitPatternList.size()];
 //			quantityPatternMaxTokens = new int[quantityPatternMaxTokensList.size()];
             quantityUnitPatternMaxTokens = new int[quantityUnitPatternMaxTokensList.size()];
             for (int p = 0; p < quantityPatternNameList.size(); p++) {
                 quantityPatternNames[p] = quantityPatternNameList.get(p);
-//                quantityPatterns[p] = quantityPatternList.get(p);
+                quantityPatterns[p] = quantityPatternList.get(p);
                 quantityUnitPatterns[p] = quantityUnitPatternList.get(p);
 //				quantityPatternMaxTokens[p] = quantityPatternMaxTokensList.get(p);
                 quantityUnitPatternMaxTokens[p] = quantityUnitPatternMaxTokensList.get(p);

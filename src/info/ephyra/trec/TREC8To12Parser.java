@@ -175,4 +175,30 @@ public class TREC8To12Parser {
             return null;  // file could not be parsed
         }
     }
+
+    public static TRECAnswer[] loadTREC8Answers(String ansFile) {
+        File file = new File(ansFile);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            String id;
+            String line, answerString;
+            TRECAnswer answer;
+            ArrayList<TRECAnswer> answers = new ArrayList<TRECAnswer>();
+            while (in.ready()) {
+                line = in.readLine();
+                int firstSpaceIndex = line.indexOf(" ");
+                id = line.substring(0, firstSpaceIndex);
+                answerString = line.substring(firstSpaceIndex + 1, line.length());
+                answer = new TRECAnswer(id, answerString);
+                answers.add(answer);
+            }
+
+            in.close();
+
+            return answers.toArray(new TRECAnswer[answers.size()]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;  // file could not be parsed
+        }
+    }
 }
