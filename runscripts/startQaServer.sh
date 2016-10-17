@@ -54,6 +54,7 @@ java -Djava.rmi.server.hostname=$ip \
      -Dcom.sun.management.jmxremote.ssl=false \
      -Dcom.sun.management.jmxremote.authenticate=false \
     -Djava.library.path=lib/search/ -server -Xms1024m -Xmx2048m  \
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005  \
      info.ephyra.OpenEphyraServer $ip $port 2>&1 | tee qaServer.log
 
 #java -agentpath:/home/qqcao/jprof/bin/linux-x64/libjprofilerti.so=port=8849,nowait \

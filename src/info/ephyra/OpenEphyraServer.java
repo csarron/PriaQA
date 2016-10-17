@@ -318,8 +318,10 @@ public class OpenEphyraServer extends AbstractHandler {
 
         if (results.length > 0) {
             String answer = results[0].getAnswer();
-            if (answer != null)
+            if (answer != null) {
                 out.println(answer);
+                MsgPrinter.printStatusMsg(answer);
+            }
             else
                 out.println("Sorry, I cannot answer your question.");
 
