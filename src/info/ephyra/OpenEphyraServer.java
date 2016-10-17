@@ -408,16 +408,17 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsg("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
-        File dir = new File("logs"+File.separator+"question-" + aq.getQuestion());
+        File dir = new File("qaDocs" + File.separator + aq.getQuestion().replace(" ", "_"));
         if (!dir.exists()) {
             if (!dir.mkdirs())
-                MsgPrinter.printErrorMsg("cannot create log dir!");
+                MsgPrinter.printErrorMsg("cannot create qaDocs dir!");
         }
 
-        for (int i = 0; i < results.length; i++) {
+        for (Result result : results) {
             try {
-                FileUtils.writeString(results[i].getPassage(),
-                        new File(dir.getAbsolutePath()+File.separator+i+".log"), "UTF-8");
+                FileUtils.writeString(result.getPassage(),
+                        new File(dir.getAbsolutePath() + File.separator +
+                                result.getDocID() + ".txt"), "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
