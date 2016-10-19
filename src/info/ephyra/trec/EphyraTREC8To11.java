@@ -1,5 +1,6 @@
 package info.ephyra.trec;
 
+import info.ephyra.answerselection.filters.ScoreSorterFilter;
 import info.ephyra.io.Logger;
 import info.ephyra.io.MsgPrinter;
 import info.ephyra.search.Result;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * <p>Runs and evaluates Ephyra on the data from the TREC 8-11 QA tracks.</p>
- *
+ * <p>
  * <p>This class extends <code>OpenEphyraCorpus</code>.</p>
  *
  * @author Nico Schlaefer
@@ -30,6 +31,8 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
      * Question strings.
      */
     protected static String[] qss;
+
+    protected static String[] ans;
     /**
      * Corresponding regular expressions that describe correct answers.
      */
@@ -49,7 +52,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
      * @param qFile name of the question file
      * @param pFile name of the pattern file
      */
-    private static void loadTRECData(String qFile, String pFile) {
+    private static void loadTRECData(String qFile, String pFile, String ansFile) {
         // load questions from file
         TRECQuestion[] questions = TREC8To12Parser.loadQuestions(qFile);
         qss = new String[questions.length];
@@ -62,6 +65,13 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         for (int i = 0; i < questions.length; i++)
             if ((i < patterns.length) && (patterns[i] != null))
                 regexs[i] = patterns[i].getRegexs()[0];
+
+        ans = new String[questions.length];
+        TRECAnswer[] answers = TREC8To12Parser.loadTREC8Answers(ansFile);
+        for (int i = 0; i < questions.length; i++) {
+            assert answers != null;
+            ans[i] = answers[i].getAnswerString();
+        }
     }
 
     /**
@@ -76,8 +86,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         float mrr = 0;
 
         for (int i = 0; i < qss.length; i++) {
-            System.out.print("no;" + i +";" + qss[i]);
-
+            System.out.print("question " + (i+1) + "; " + qss[i] + "(" + ans[i] + ")" + "; ");
             Logger.enableLogging(false);
 
             // ask Ephyra or load answer from log file
@@ -98,17 +107,30 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
             if (regexs[i] != null) {
                 Pattern p = Pattern.compile(regexs[i]);
                 for (int j = 0; j < results.length; j++) {
-                    Matcher m = p.matcher(results[j].getAnswer());
+                    String ans=results[j].getAnswer();
+                    if (ans.length() > 20) {
+                        results[j].setAnswer("too long, not shown");
+                        continue;
+                    }
+                    Matcher m = p.matcher(ans);
                     correct[j] = m.find();
-                    if (correct[j] && firstCorrect == 0) firstCorrect = j + 1;
+                    if (correct[j] && firstCorrect == 0) {
+                        firstCorrect = j + 1;
+                        System.out.print("answer is " + ans);
+                    }
                 }
             }
             if (firstCorrect > 0) {
-                System.out.println(";correct!");
+                System.out.println("; correct!");
                 precision++;
                 mrr += ((float) 1) / firstCorrect;
             } else {
-                System.out.println(";wrong!");
+                if (results.length > 0) {
+                    System.out.print("answer is " + results[0].getAnswer());
+                } else {
+                    System.out.println("no answer ");
+                }
+                System.out.println("; wrong!");
             }
 
             Logger.logResultsJudged(results, correct);
@@ -136,16 +158,16 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         MsgPrinter.enableStatusMsgs(false);
         MsgPrinter.enableErrorMsgs(true);
 
-        if (args.length < 2) {
+        if (args.length < 3) {
             MsgPrinter.printUsage("java EphyraTREC8To11 question_file " +
-                    "pattern_file [log=logfile] [load_log]");
+                    "pattern_file ans_file [log=logfile] [load_log]");
             System.exit(1);
         }
 
         // load questions and patterns
-        loadTRECData(args[0], args[1]);
+        loadTRECData(args[0], args[1], args[2]);
 
-        for (int i = 2; i < args.length; i++)
+        for (int i = 3; i < args.length; i++)
             if (args[i].matches("log=.*")) {
                 // set log file
                 logFile = args[i].substring(4);

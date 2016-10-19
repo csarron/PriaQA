@@ -66,6 +66,7 @@
 33 Berlin
 34 Hollywood\s+Memorial\s+Park
 34 Hollywood\s+Cemetery
+34 Hollywood
 35 Kilimanjaro
 35 Uhuru\s+Peak
 36 Tuesday
@@ -297,6 +298,7 @@
 177 29\s*,?\s*028\s*-?\s*foot
 177 29\s*,?\s*100\s*-?\s*f(?:ee)?t
 177 29\s*,?\s*100\s*-?\s*foot
+177 8848m
 178 Brazzaville
 179 Rome
 180 Colombo
@@ -314,6 +316,7 @@
 188 Aug\s*\.?\s*18\s*,?\s*1920
 188 1893.*?27\s+years\s+before
 188 69\s+years\s+ago.*?1989
+188 1920
 189 Persian\s+Gulf
 189 Middle\s+East
 190 Ind(?:iana)?

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A parser for the TREC 8-12 QA tracks.
@@ -173,6 +174,41 @@ public class TREC8To12Parser {
             return answers.toArray(new TRECAnswer[answers.size()]);
         } catch (IOException e) {
             return null;  // file could not be parsed
+        }
+    }
+
+    public static TRECAnswer[] loadTREC8Answers(String ansFile) {
+        HashMap<String, TRECAnswer> idMap = new HashMap<>();
+        File file = new File(ansFile);
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            String id;
+            String line, answerString;
+            TRECAnswer answer;
+            ArrayList<TRECAnswer> answers = new ArrayList<TRECAnswer>();
+            while (in.ready()) {
+                line = in.readLine();
+                int firstSpaceIndex = line.indexOf(" ");
+                id = line.substring(0, firstSpaceIndex);
+                answerString = line.substring(firstSpaceIndex + 1, line.length());
+                if (idMap.containsKey(id)) {
+                    answer =idMap.get(id);
+                    answer.setAnswerString(answer.getAnswerString()
+                             + "=OR=" +answerString);
+                } else {
+                    answer = new TRECAnswer(id, answerString);
+                    idMap.put(id, answer);
+                    answers.add(answer);
+                }
+
+            }
+
+            in.close();
+
+            return answers.toArray(new TRECAnswer[answers.size()]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new TRECAnswer[0];  // file could not be parsed
         }
     }
 }
