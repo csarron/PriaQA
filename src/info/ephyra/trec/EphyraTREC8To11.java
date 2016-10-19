@@ -79,6 +79,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
      * answers.
      */
     private static void runAndEval() {
+        long begin = System.currentTimeMillis();
         // initialize Ephyra
         EphyraTREC8To11 ephyra = new EphyraTREC8To11();
 
@@ -143,6 +144,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         System.out.println("mrr: " + mrr);
 
         Logger.logScores(precision, mrr);
+        System.out.println("time: "+(System.currentTimeMillis()-begin));
     }
 
     /**
