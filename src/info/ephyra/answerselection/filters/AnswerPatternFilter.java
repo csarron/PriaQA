@@ -317,12 +317,14 @@ public class AnswerPatternFilter extends Filter {
 //        // offline failed for this result
 //        boolean failed=false;
 //        String onlineStr = gson.toJson(nes);
-//        if (nes.length != sentences.length) {
-//            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
-////            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
-//
-////            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
-//        } else {
+        if (nes.length < sentences.length) {
+            MsgPrinter.printStatusMsg("failed json: " + result.getDocID());
+            nes = NETagger.extractNes(tokens);
+//            MsgPrinter.printErrorMsg("offline ne: " +  neStr);
+
+//            MsgPrinter.printErrorMsg("online ne: "+ gson.toJson(nes));
+        }
+// else {
 //            level1:
 //            for (int i = 0; i < nes.length; i++) {
 //                if (nes[i].length != nesOffline[i].length) {

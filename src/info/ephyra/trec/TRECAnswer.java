@@ -15,6 +15,11 @@ public class TRECAnswer {
      * The ID of the answer.
      */
     private String id;
+
+    public void setAnswerString(String answerString) {
+        this.answerString = answerString;
+    }
+
     /**
      * The answer string.
      */

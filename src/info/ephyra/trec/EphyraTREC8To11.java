@@ -69,6 +69,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         ans = new String[questions.length];
         TRECAnswer[] answers = TREC8To12Parser.loadTREC8Answers(ansFile);
         for (int i = 0; i < questions.length; i++) {
+            assert answers != null;
             ans[i] = answers[i].getAnswerString();
         }
     }
@@ -109,12 +110,13 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
                     String ans=results[j].getAnswer();
                     if (ans.length() > 20) {
                         results[j].setAnswer("too long, not shown");
+                        continue;
                     }
                     Matcher m = p.matcher(ans);
                     correct[j] = m.find();
                     if (correct[j] && firstCorrect == 0) {
                         firstCorrect = j + 1;
-                        System.out.print("answer is " + results[j].getAnswer());
+                        System.out.print("answer is " + ans);
                     }
                 }
             }
