@@ -318,7 +318,7 @@ public class OpenEphyraServer extends AbstractHandler {
             String answer = results[0].getAnswer();
             if (answer != null) {
                 out.println(answer);
-                MsgPrinter.printStatusMsg(answer);
+                MsgPrinter.printStatusMsgTimestamp(answer);
             }
             else
                 out.println("Sorry, I cannot answer your question.");
@@ -400,17 +400,17 @@ public class OpenEphyraServer extends AbstractHandler {
                                    float absThresh) {
         // query generation
 //        MsgPrinter.printGeneratingQueries();
-        MsgPrinter.printStatusMsg("3.1 Getting answers....query generation");
+        MsgPrinter.printStatusMsgTimestamp("3.1 Getting answers....query generation");
         Query[] queries = QueryGeneration.getQueries(aq);
 
         // search
 //        MsgPrinter.printSearching();
-        MsgPrinter.printStatusMsg("3.2 Getting answers....searching");
+        MsgPrinter.printStatusMsgTimestamp("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
         // answer selection
 //        MsgPrinter.printSelectingAnswers();
-        MsgPrinter.printStatusMsg("3.3 Getting answers....selecting answers");
+        MsgPrinter.printStatusMsgTimestamp("3.3 Getting answers....selecting answers");
 
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
 
@@ -440,17 +440,17 @@ public class OpenEphyraServer extends AbstractHandler {
                                float absThresh) {
 //        timestamp = System.currentTimeMillis();
         // initialize pipeline
-        MsgPrinter.printStatusMsg("1. Initializing pipeline....");
+        MsgPrinter.printStatusMsgTimestamp("1. Initializing pipeline....");
         initFactoid();
 
         // analyze question
 //        MsgPrinter.printAnalyzingQuestion();
-        MsgPrinter.printStatusMsg("2. Analyzing question....");
+        MsgPrinter.printStatusMsgTimestamp("2. Analyzing question....");
 
         AnalyzedQuestion aq = QuestionAnalysis.analyze(question);
 
         // get answers
-        MsgPrinter.printStatusMsg("3. Getting answers....");
+        MsgPrinter.printStatusMsgTimestamp("3. Getting answers....");
         Result[] results = runPipeline(aq, maxAnswers, absThresh);
 
         return results;
