@@ -1,16 +1,6 @@
 package info.ephyra.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -106,13 +96,13 @@ public class FileUtils {
      */
     public static String readString(File input, String encoding)
             throws IOException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         FileInputStream fis = new FileInputStream(input);
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(fis, encoding));
         for (String nextLine; (nextLine = reader.readLine()) != null; )
-            buffer.append(nextLine + "\n");
+            buffer.append(nextLine).append("\n");
         reader.close();
 
         return buffer.toString();
@@ -124,20 +114,24 @@ public class FileUtils {
      *
      * @param s        string
      * @param output   output file
-     * @param encoding file encoding
      */
-    public static void writeString(String s, File output, String encoding)
-            throws IOException {
-        BufferedReader buffer = new BufferedReader(new StringReader(s));
+    public static void writeString(String s, File output, boolean append) {
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(output, append));
+            bw.write(s);
+            bw.newLine();
+            bw.flush();
+        }catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {                       // always close the file
+            if (bw != null) try {
+                bw.close();
+            } catch (IOException ioe2) {
+                ioe2.printStackTrace();
+            }
+        }
 
-        FileOutputStream fos = new FileOutputStream(output);
-        PrintWriter writer =
-                new PrintWriter(new OutputStreamWriter(fos, encoding));
-        for (String nextLine; (nextLine = buffer.readLine()) != null; )
-            writer.println(nextLine);
-        writer.close();
-
-        buffer.close();
     }
 
     /**

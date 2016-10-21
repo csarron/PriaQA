@@ -41,6 +41,7 @@ import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
 import info.ephyra.search.searchers.IndriKM;
+import info.ephyra.util.FileUtils;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
@@ -49,6 +50,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
@@ -86,7 +88,7 @@ public class OpenEphyraServer extends AbstractHandler {
     /**
      * Maximum number of factoid answers.
      */
-    protected static final int FACTOID_MAX_ANSWERS = 1;
+    protected static final int FACTOID_MAX_ANSWERS = 50;
     /**
      * Absolute threshold for factoid answer scores.
      */
@@ -408,11 +410,36 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsgTimestamp("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
+        File docTextDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
+                + File.separator + "DocText");
+        if (!docTextDir.exists()) {
+            if (!docTextDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create DocText dir!");
+        }
+
+        for (Result result : results) {
+            FileUtils.writeString(result.getPassage(),
+                    new File(docTextDir.getAbsolutePath() + File.separator
+                            + result.getDocID() + ".txt"), false);
+        }
+
         // answer selection
 //        MsgPrinter.printSelectingAnswers();
         MsgPrinter.printStatusMsgTimestamp("3.3 Getting answers....selecting answers");
 
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
+        File candidatesDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
+                + File.separator + "Candidates");
+        if (!candidatesDir.exists()) {
+            if (!candidatesDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create Candidates Dir!");
+        }
+
+        for (Result result : results) {
+            FileUtils.writeString(result.getAnswer(),
+                    new File(candidatesDir.getAbsolutePath() + File.separator
+                            + result.getDocID() + ".txt"), true);
+        }
 
         return results;
     }

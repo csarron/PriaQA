@@ -573,6 +573,10 @@ public class Result implements Comparable<Result>, Serializable {
         return result;
     }
 
+    public String getPassage() {
+        return "docID is: \n" + docID + "\n" + "passage is: \n" + (answer) + "\n" ;
+    }
+
     @Override
     public String toString() {
         return "[query is: " + query + "\n"

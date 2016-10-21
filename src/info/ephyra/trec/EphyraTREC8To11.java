@@ -87,7 +87,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         float mrr = 0;
 
         for (int i = 0; i < qss.length; i++) {
-            System.out.print("question " + (i+1) + "; " + qss[i] + "(" + ans[i] + ")" + "; ");
+            System.out.print("question " + (i+1) + "; " + qss[i] + "; truth ["+ ans[i] + "]" + "; ");
             Logger.enableLogging(false);
 
             // ask Ephyra or load answer from log file
