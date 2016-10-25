@@ -35,7 +35,7 @@ export CLASSPATH=bin:lib/ml/maxent.jar:lib/ml/minorthird.jar:lib/nlp/jwnl.jar:li
 
 #export INDRI_INDEX=`pwd`/wiki_indri_index/
 #export INDRI_INDEX=/home/qqcao/wikidata/enwiki-index/
-export INDRI_INDEX=/home/qqcao/pria/wikidata/enwiki-index-doc/
+export INDRI_INDEX=/home/qqcao/pria/wikidata/enwiki-index-ne/
 #export INDRI_INDEX=/home/qingqing/wikidata/enwiki-index/
 
 os=`uname`
