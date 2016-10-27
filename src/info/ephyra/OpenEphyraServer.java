@@ -410,36 +410,11 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsgTimestamp("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
-        File docTextDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
-                + File.separator + "DocText");
-        if (!docTextDir.exists()) {
-            if (!docTextDir.mkdirs())
-                MsgPrinter.printErrorMsg("cannot create DocText dir!");
-        }
-
-        for (Result result : results) {
-            FileUtils.writeString(result.getPassage(),
-                    new File(docTextDir.getAbsolutePath() + File.separator
-                            + result.getDocID() + ".txt"), false);
-        }
-
         // answer selection
 //        MsgPrinter.printSelectingAnswers();
         MsgPrinter.printStatusMsgTimestamp("3.3 Getting answers....selecting answers");
 
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
-        File candidatesDir = new File("qaData" + File.separator + aq.getQuestion().replace(" ", "_")
-                + File.separator + "Candidates");
-        if (!candidatesDir.exists()) {
-            if (!candidatesDir.mkdirs())
-                MsgPrinter.printErrorMsg("cannot create Candidates Dir!");
-        }
-
-        for (Result result : results) {
-            FileUtils.writeString(result.getAnswer(),
-                    new File(candidatesDir.getAbsolutePath() + File.separator
-                            + result.getDocID() + ".txt"), true);
-        }
 
         return results;
     }

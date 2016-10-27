@@ -1,5 +1,6 @@
 package info.ephyra.trec;
 
+import info.ephyra.OpenEphyra;
 import info.ephyra.answerselection.filters.ScoreSorterFilter;
 import info.ephyra.io.Logger;
 import info.ephyra.io.MsgPrinter;
@@ -22,7 +23,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
     /**
      * Maximum number of factoid answers.
      */
-    protected static final int FACTOID_MAX_ANSWERS = 5;
+    protected static final int FACTOID_MAX_ANSWERS = 50;
     /**
      * Absolute threshold for factoid answer scores.
      */
@@ -87,7 +88,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         float mrr = 0;
 
         for (int i = 0; i < qss.length; i++) {
-            System.out.print("question " + (i+1) + "; " + qss[i] + "; truth ["+ ans[i] + "]" + "; ");
+            System.out.print("question " + (i + 1) + "; " + qss[i] + "; truth [" + ans[i] + "]" + "; ");
             Logger.enableLogging(false);
 
             // ask Ephyra or load answer from log file
@@ -101,15 +102,15 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
                 results = ephyra.askFactoid(qss[i], FACTOID_MAX_ANSWERS,
                         FACTOID_ABS_THRESH);
             }
-
+            System.out.print("result length " + results.length + "; ");
             // evaluate answers
             boolean[] correct = new boolean[results.length];
             int firstCorrect = 0;
             if (regexs[i] != null) {
                 Pattern p = Pattern.compile(regexs[i]);
                 for (int j = 0; j < results.length; j++) {
-                    String ans=results[j].getAnswer();
-                    if (ans.length() > 20) {
+                    String ans = results[j].getAnswer();
+                    if (ans.length() > 50) {
                         results[j].setAnswer("too long, not shown");
                         continue;
                     }
@@ -117,7 +118,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
                     correct[j] = m.find();
                     if (correct[j] && firstCorrect == 0) {
                         firstCorrect = j + 1;
-                        System.out.print("answer is " + ans);
+                        System.out.print("answer is at " + j + " " + ans);
                     }
                 }
             }
@@ -144,7 +145,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
         System.out.println("mrr: " + mrr);
 
         Logger.logScores(precision, mrr);
-        System.out.println("time: "+(System.currentTimeMillis()-begin));
+        System.out.println("time: " + (System.currentTimeMillis() - begin));
     }
 
     /**

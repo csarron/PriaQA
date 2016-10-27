@@ -19,7 +19,7 @@
 6 finish\w*\s+writing.*?revelations
 7 1\.4\s*(?:(?:bn)|(?:billion))
 7 1\.6\s*(?:(?:bn)|(?:billion))
-8 Tourette\s*'\s*s
+8 Tourette\s*\s*s
 9 150 miles?
 10 Pfister
 11 Folsom
@@ -88,6 +88,7 @@
 45 Feb\s*10
 45 Feb.*?94
 46 Jesus\s+Gil\s+y\s+Gil
+46 Gil
 47 Mitsubishi\s+Heavy\s+Industries
 48 Yongbyon
 48 Yongbyun
@@ -194,6 +195,7 @@
 115 readiness\s+skills
 116 New\s+York\s+Jets
 117 (?:Watson.*?Crick)|(?:Crick.*?Watson)
+117 Watson
 118 30\s*(?:%|(?:per)|(?:pct))
 118 20\s+per\s+cent\s+of\s+all\s+higher\s+plant\s+species
 119 Mairead\s+(?:(?:Maguire)|(?:Corrigan))
@@ -313,6 +315,7 @@
 187 Ford\s*'?\s*s\s+Theater
 187 Ford\s*'?\s*s\s+Theatre
 187 Washington\s*,?\s*D\s*\.?\s*C\s*\.?
+187 Washington
 188 Aug\s*\.?\s*18\s*,?\s*1920
 188 1893.*?27\s+years\s+before
 188 69\s+years\s+ago.*?1989

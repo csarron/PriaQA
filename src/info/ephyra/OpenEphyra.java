@@ -41,7 +41,9 @@ import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
 import info.ephyra.search.searchers.IndriKM;
+import info.ephyra.util.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -51,6 +53,7 @@ import java.util.ArrayList;
  * @version 2008-03-23
  */
 public class OpenEphyra {
+    public static int questionNo = 1;
     /**
      * Serialized classifier for score normalization.
      */
@@ -71,7 +74,7 @@ public class OpenEphyra {
     /**
      * Maximum number of factoid answers.
      */
-    protected static final int FACTOID_MAX_ANSWERS = 1;
+    protected static final int FACTOID_MAX_ANSWERS = 50;
     /**
      * Absolute threshold for factoid answer scores.
      */
@@ -88,7 +91,7 @@ public class OpenEphyra {
 
     /**
      * <p>Creates a new instance of Ephyra and initializes the system.</p>
-     *
+     * <p>
      * <p>For use as a standalone system.</p>
      */
     protected OpenEphyra() {
@@ -97,7 +100,7 @@ public class OpenEphyra {
 
     /**
      * <p>Creates a new instance of Ephyra and initializes the system.</p>
-     *
+     * <p>
      * <p>For use as an API.</p>
      *
      * @param dir directory of Ephyra
@@ -330,11 +333,40 @@ public class OpenEphyra {
         // search
         MsgPrinter.printSearching();
         Result[] results = Search.doSearch(queries);
+        File docTextDir = new File("qaData" + File.separator + questionNo + aq.getQuestion().replace(" ", "_")
+                + File.separator + "DocText");
+        if (!docTextDir.exists()) {
+            if (!docTextDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create DocText dir!");
+        }
+
+        for (Result result : results) {
+            FileUtils.writeString(result.getPassage(),
+                    new File(docTextDir.getAbsolutePath() + File.separator
+                            + result.getDocID() + ".txt"), false);
+        }
 
         // answer selection
         MsgPrinter.printSelectingAnswers();
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
+        File candidatesDir = new File("qaData" + File.separator + questionNo + aq.getQuestion().replace(" ", "_")
+                + File.separator + "Candidates");
+        if (!candidatesDir.exists()) {
+            if (!candidatesDir.mkdirs())
+                MsgPrinter.printErrorMsg("cannot create Candidates Dir!");
+        }
 
+        for (Result result : results) {
+            if (result.getAnswer().length() > 50) {
+//            System.out.println("result id; " + result.getDocID() + " answer too long;" + result.getAnswer().substring(0,50));
+            } else {
+//                System.out.println("result id; " + result.getDocID() + " answer;" + result.getAnswer());
+                FileUtils.writeString(result.getAnswer() + " ;at " + result.getDocID(),
+                        new File(candidatesDir.getAbsolutePath() + File.separator
+                                 + ".txt"), true);
+            }
+        }
+        questionNo++;
         return results;
     }
 
@@ -349,10 +381,10 @@ public class OpenEphyra {
 
     /**
      * <p>A command line interface for Ephyra.</p>
-     *
+     * <p>
      * <p>Repeatedly queries the user for a question, asks the system the
      * question and prints out and logs the results.</p>
-     *
+     * <p>
      * <p>The command <code>exit</code> can be used to quit the program.</p>
      */
     public void commandLine(String query_input) {
