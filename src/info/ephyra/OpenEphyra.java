@@ -356,15 +356,17 @@ public class OpenEphyra {
                 MsgPrinter.printErrorMsg("cannot create Candidates Dir!");
         }
 
+        int seq=0;
         for (Result result : results) {
             if (result.getAnswer().length() > 50) {
 //            System.out.println("result id; " + result.getDocID() + " answer too long;" + result.getAnswer().substring(0,50));
             } else {
 //                System.out.println("result id; " + result.getDocID() + " answer;" + result.getAnswer());
-                FileUtils.writeString(result.getAnswer() + " ;at " + result.getDocID(),
+                FileUtils.writeString(result.getAnswer() + " ;at " + seq,
                         new File(candidatesDir.getAbsolutePath() + File.separator
-                                 + ".txt"), true);
+                                + result.getDocID()+ ".txt"), true);
             }
+            seq++;
         }
         questionNo++;
         return results;

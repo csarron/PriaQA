@@ -110,7 +110,6 @@ public class OpenEphyraCorpus extends OpenEphyra {
         AnswerSelection.addFilter(new FactoidsFromPredicatesFilter());
         AnswerSelection.addFilter(new TruncationFilter());
         // - answer selection filters
-        AnswerSelection.addFilter(new DuplicateFilter());
         AnswerSelection.addFilter(new ScoreSorterFilter());
     }
 
