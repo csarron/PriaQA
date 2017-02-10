@@ -362,12 +362,13 @@ public class OpenEphyra {
 //            System.out.println("result id; " + result.getDocID() + " answer too long;" + result.getAnswer().substring(0,50));
             } else {
 //                System.out.println("result id; " + result.getDocID() + " answer;" + result.getAnswer());
-                FileUtils.writeString(result.getAnswer() + " ;at " + seq,
+                FileUtils.writeString(result.getAnswer() + " ;at " + seq + " ;score is " + result.getScore(),
                         new File(candidatesDir.getAbsolutePath() + File.separator
-                                + result.getDocID()+ ".txt"), true);
+                                + result.getDocID() + ".txt"), true);
             }
             seq++;
         }
+        System.out.println("questions: " + aq.getQuestion() + "qno: " + questionNo);
         questionNo++;
         return results;
     }
