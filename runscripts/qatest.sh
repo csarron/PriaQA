@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#awk -F '\t' '{print $2}' WikiQA-train.tsv | uniq > WikiQATrain-questions.txt
 dateStr="date +%s%3N"
 os=`uname`
 if [[ "$os" == "Darwin" ]]; then
