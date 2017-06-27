@@ -753,14 +753,7 @@ public class ScoreNormalizationFilter extends Filter {
                 // write report
                 String report =
                         createReport(dataSets, features, model, eval, runTime);
-                try {
-                    FileUtils.writeString(report, reportFile, "UTF-8");
-                } catch (IOException e) {
-                    MsgPrinter.printErrorMsg("Failed to write report to file " +
-                            reportFile + ":");
-                    MsgPrinter.printErrorMsg(e.toString());
-                    System.exit(1);
-                }
+                FileUtils.writeString(report, reportFile, false);
 
                 // remember combination that yields highest F1 score
                 double thisF1 = eval.f1();

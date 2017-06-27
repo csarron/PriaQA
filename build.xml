@@ -54,6 +54,7 @@
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac includeantruntime="false" debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+            <compilerarg line="-encoding utf-8"/>
             <src path="src"/>
             <classpath refid="OpenEphyra.classpath"/>
         </javac>
