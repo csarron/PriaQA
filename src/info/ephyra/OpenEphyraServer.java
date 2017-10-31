@@ -40,6 +40,7 @@ import info.ephyra.questionanalysis.QuestionInterpreter;
 import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
+import info.ephyra.search.searchers.GalagoKM;
 import info.ephyra.search.searchers.IndriKM;
 import info.ephyra.util.FileUtils;
 
@@ -361,8 +362,14 @@ public class OpenEphyraServer extends AbstractHandler {
         MsgPrinter.printStatusMsg("1.3 Initializing pipeline....addKnowledgeMiner");
         Search.clearKnowledgeMiners();
 
-        for (String[] indriIndices : IndriKM.getIndriIndices())
-            Search.addKnowledgeMiner(new IndriKM(indriIndices, false));
+        String engine = System.getenv("ENGINE");
+        if ("Indri".equalsIgnoreCase(engine)) {
+            for (String[] indriIndices : IndriKM.getIndriIndices())
+                Search.addKnowledgeMiner(new IndriKM(indriIndices, false));
+        } else if ("Galago".equalsIgnoreCase(engine)) {
+            String index = System.getenv("GALAGO_INDEX");
+            Search.addKnowledgeMiner(new GalagoKM(index));
+        }
 
         // - knowledge annotators for (semi-)structured knowledge sources
         Search.clearKnowledgeAnnotators();
