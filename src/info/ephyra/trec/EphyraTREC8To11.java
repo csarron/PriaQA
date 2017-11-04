@@ -134,7 +134,7 @@ public class EphyraTREC8To11 extends OpenEphyraCorpus {
                 }
                 System.out.println("; wrong!");
             }
-
+            System.out.println("===>correct count: " + precision);
             Logger.logResultsJudged(results, correct);
             Logger.logFactoidEnd();
         }

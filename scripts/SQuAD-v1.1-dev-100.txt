@@ -1,0 +1,100 @@
+{"answer": ["Levi's Stadium", "Levi's Stadium", "Levi's Stadium in the San Francisco Bay Area at Santa Clara"], "question": "What venue did Super Bowl 50 take place in?"}
+{"answer": ["1985", "1985", "1985"], "question": "Prior to this consideration, when did San Francisco last host a Super Bowl?"}
+{"answer": ["events and festivals", "events and festivals", "events and festivals"], "question": "What does Warsaw host many of?"}
+{"answer": ["Katy\u0144", "Katy\u0144 Museum", "Katy\u0144 Museum"], "question": "What museum preserves the memory of the crime?"}
+{"answer": ["\"Bricks for Warsaw\"", "Bricks for Warsaw", "Bricks for Warsaw"], "question": "What campaign did the Communist regime initiate after WWII?"}
+{"answer": ["Catholic", "Catholic orthodoxy", "Catholic"], "question": "What religion were the Normans"}
+{"answer": ["rounded", "rounded", "rounded"], "question": "What kind of arches does Norman architecture have?"}
+{"answer": ["firm, clear boundaries", "firm, clear", "clear"], "question": "What type of boundaries help to define the way kids behave?"}
+{"answer": ["Controlled, experimental studies", "Controlled, experimental", "Controlled, experimental"], "question": "What type of studies explored student motivation?"}
+{"answer": ["very influential", "influential", "influential"], "question": "What can an enthusiastic teacher be to a young student?"}
+{"answer": ["eliminate the accusing law", "eliminate the accusing law.", "eliminate the accusing law"], "question": "What does refusing to preach the Ten Commandments not do?"}
+{"answer": ["least prejudiced", "least prejudiced", "least prejudiced toward Jews"], "question": "What did a survey of North American Lutherans find that Lutherans felt about Jews compared to other minority groups?"}
+{"answer": ["south", "south"], "question": "In which cardinal direction from Los Angeles is San Diego?"}
+{"answer": ["1.3 million", "1.3 million", "San Diego"], "question": "What is the population of the second largest city in California?"}
+{"answer": ["business", "major business districts", "major business"], "question": "Downtown Burbank is an example of what kind of district?"}
+{"answer": ["second", "second", "second"], "question": "Where according to gross state product does Victoria rank in Australia?"}
+{"answer": ["east-west", "east-west", "east-west"], "question": "In what direction does the mountain system extend?"}
+{"answer": ["Pons", "Pons in France", "Pons"], "question": "Charleston settler Elie Prioleau was from what French town?"}
+{"answer": ["little Hugos, or those who want Hugo", "little Hugos", "little Hugos, or those who want Hugo."], "question": "According to the theory, what does the name \"Huguenot\" mean?"}
+{"answer": ["Corliss", "patent valve", "Corliss"], "question": "Along with poppet valve gears, what type of gears utilized separate admission and exhaust valves to give ideal events?"}
+{"answer": ["Energiprojekt AB", "Energiprojekt AB", "Energiprojekt AB"], "question": "What modern company has been notably working on a steam engine using modern materials?"}
+{"answer": ["four", "four", "four"], "question": "How many valves did the Corliss engine use?"}
+{"answer": ["a body of treaties and legislation", "a body of treaties and legislation, such as Regulations and Directives, which have direct effect or indirect effect on the laws of European Union member states", "a body of treaties and legislation, such as Regulations and Directives", "a body of treaties and legislation, such as Regulations and Directives"], "question": "What is European Union law?"}
+{"answer": ["European Council", "the European Council", "the European Council", "the European Council"], "question": "Who appoints the board of the European Central Bank?"}
+{"answer": ["in Article 5", "the lawfulness of an action depends on whether it was appropriate and necessary to achieve the objectives legitimately pursued", "Article 5"], "question": "Where is the principle of proportionality recognized in the EC treaty?"}
+{"answer": ["Jean-Marc Bosman", "the Belgian Football Association v Bosman", "Jean-Marc Bosman"], "question": "Which Belgian footballer claimed that he should be allowed to transfer from one football club to another when his contract was fulfilled?"}
+{"answer": ["587,000", "587,000", "587,000"], "question": "In the year 2000 how many square kilometres of the Amazon forest had been lost?"}
+{"answer": ["sea gooseberry", "sea gooseberry", "sea gooseberry"], "question": "What is the common coastal pleurobrachia called?"}
+{"answer": ["San Joaquin Light & Power Building", "San Joaquin Light & Power Building", "San Joaquin Light & Power Building"], "question": "What former building is currently known as Grand 1401?"}
+{"answer": ["William Stranahan", "William Stranahan", "William Stranahan"], "question": "Who mapped the Alta Vista Tract?"}
+{"answer": ["automobiles", "automobiles", "automobiles"], "question": "The transportation law allows personal aircraft to share the roadways with what?"}
+{"answer": ["a form of anthrax", "was a form of anthrax", "the cause was a form of anthrax"], "question": "What does Graham Twigg propose about the spread of disease?"}
+{"answer": ["seismic waves", "seismic", "seismic", "seismic"], "question": "What types of waves do seismologists use to image the interior of the Earth?"}
+{"answer": ["crust", "crust", "lithosphere", "crust and lithosphere"], "question": "In the layered model of the Earth, the outermost layer is what? "}
+{"answer": ["second scale shows the most recent eon with an expanded scale", "compresses the most recent era", "compresses the most recent era"], "question": "Why is the second timeline needed? "}
+{"answer": ["Geordie", "Geordie", "Geordie"], "question": "What's the regional nickname for Newcastle and its surrounding area?"}
+{"answer": ["suburban", "suburban", "the largest suburban shopping areas"], "question": "Gosforth and Byker are the largest shopping areas of what type?"}
+{"answer": ["A bridge", "A bridge", "A bridge"], "question": "What did Queen Elizabeth II open in Newcastle in 1981?"}
+{"answer": ["Sunday Times University of the Year award", "Sunday Times University of the Year", "Sunday Times University of the Year award"], "question": "What did Newcastle University win in 2000?"}
+{"answer": ["named after Queen Victoria and Prince Albert", "Queen Victoria and Prince Albert", "Queen Victoria and Prince Albert", "Queen Victoria and Prince Albert"], "question": "Who is the museum named for?"}
+{"answer": ["Citadel Broadcasting", "Citadel Broadcasting", "Citadel Broadcasting"], "question": "ABC news provides content for radio stations owned by what company?"}
+{"answer": ["drama series", "drama series", "drama series"], "question": "What kind of programs did NBC Red test?"}
+{"answer": ["1952", "1952", "1952"], "question": "When was the FCC's sixth report and order released?"}
+{"answer": ["NBC", "NBC", "NBC"], "question": "What network approached Walt Disney about producing color broadcasts of his anthology series?"}
+{"answer": ["Anne Sweeney", "Anne Sweeney", "Anne Sweeney"], "question": "Who was named president of Disney-ABC television group in 2004?"}
+{"answer": ["Arts & Entertainment Television (A&E)", "Arts & Entertainment Television (A&E)", "Arts & Entertainment Television (A&E)"], "question": "What was the resulting channel of the ARTS merger called?"}
+{"answer": ["Life", "Life", "Life"], "question": "What magazine criticized ABC's programming strategy in May 1961?"}
+{"answer": ["with a cangue, a sort of portable stocks", "cangue", "cangue, a sort of portable stocks"], "question": "How was Tem\u00fcjin kept imprisoned by the Tayichi'ud?"}
+{"answer": ["Subutai", "Subutai", "Subutai"], "question": "Which well-known general abandoned Jamukha's coalition against Tem\u00fcjin?"}
+{"answer": ["Subutai and Jebe", "Subutai and Jebe", "Subutai and Jebe"], "question": "Who did Genghis Khan charge with finding and punishing the Shah?"}
+{"answer": ["autumn", "autumn", "autumn"], "question": "What season was it when Genghis Khan took Xiliang-fu from the Tanguts?"}
+{"answer": ["\u00d6gedei Khan", "\u00d6gedei Khan", "\u00d6gedei Khan"], "question": "Who led the most rapid expansion of the Mongol Empire?"}
+{"answer": ["Abu al-Qasim al-Zahrawi", "Abu al-Qasim al-Zahrawi", "Abu al-Qasim al-Zahrawi"], "question": "Who authored the Liber servitoris?"}
+{"answer": ["the high risk of a conflict of interest and/or the avoidance of absolute powers", "high risk of a conflict of interest", "high risk of a conflict of interest and/or the avoidance of absolute powers"], "question": "Why is majority rule used?"}
+{"answer": ["a system of many biological structures and processes within an organism that protects against disease", "system of many biological structures and processes", "a system of many biological structures and processes within an organism", "a system of many biological structures and processes within an organism"], "question": "What is the immune system?"}
+{"answer": ["mucus", "mucus", "mucus"], "question": "What is secreted by the respiratory tract to trap microorganisms?"}
+{"answer": ["gene CYP27B1", "CYP27B1", "gene CYP27B1"], "question": "What gene is responsible for converting calcidiol into calcitriol?"}
+{"answer": ["local building authority regulations and codes of practice", "local building authority regulations and codes of practice", "local building authority regulations and codes of practice"], "question": "Residential construction practices, technologies, and resources must conform to what?"}
+{"answer": ["poorly drafted contracts", "poorly drafted contracts", "poorly drafted contracts"], "question": "What leads to confusion and collapse?"}
+{"answer": ["National School", "National Type", "National School"], "question": "What is the name of the post-independence government school system in Malaysia?"}
+{"answer": ["Leonard Bernstein", "Leonard Bernstein", "Leonard Bernstein"], "question": "What famous conductor went to Harvard?"}
+{"answer": ["reduced wages", "reduced wages", "reduced wages"], "question": "What effect does trade with poorer countries have on the workers in richer countries?"}
+{"answer": ["males in the labor market", "males", "males"], "question": "Who does a gender pay gap tend to favor?"}
+{"answer": ["If (as WWF argued), population levels would start to drop to a sustainable level", "If (as WWF argued), population levels would start to drop to a sustainable level", "population levels would start to drop to a sustainable level", "population levels would start to drop to a sustainable level"], "question": "How could human inequality be addressed without resulting in an increase of environmental damage?"}
+{"answer": ["97", "79", "97"], "question": "How many of the episodes produced in the first six seasons are not in BBC's archives?"}
+{"answer": ["Milton Friedman Institute", "Milton Friedman Institute", "Milton Friedman Institute", "Milton Friedman Institute"], "question": "What institute did the university announced to everyone in 2008?"}
+{"answer": ["a board of trustees", "board of trustees", "The Board of Trustees"], "question": "Who runs the University of Chicago?"}
+{"answer": ["Robert Zimmer", "Daniel Diermeier", "Daniel Diermeier"], "question": "Who took Isaacs place as Provost in 2016?"}
+{"answer": ["1314", "1314", "1314"], "question": "When did Zhu Shijie die?"}
+{"answer": ["Duarte Barbosa", "Duarte Barbosa", "Duarte Barbosa"], "question": "What voyager said that Mombasa was a great harbour and moored small crafts and great ships?"}
+{"answer": ["small-scale manufacturing of household goods, motor-vehicle parts, and farm implements", "small-scale manufacturing", "small-scale manufacturing"], "question": "What does the sector known as Jua Kali engage in?"}
+{"answer": ["in agriculture", "agriculture", "agriculture"], "question": "Where are most working children working?"}
+{"answer": ["Kenyan athletes (particularly Kalenjin)", "Kenyan athletes", "Kenya"], "question": "Who dominates the world of long distance running?"}
+{"answer": ["three meals in a day", "three", "three"], "question": "How many meals a day do normal Kenyans eat?"}
+{"answer": ["The coordinating lead authors", "coordinating lead authors", "coordinating lead authors"], "question": "Who assembles the authors' contributions?"}
+{"answer": ["glaucophyte chloroplasts", "glaucophyte chloroplasts", "glaucophyte chloroplasts"], "question": "What are muroplasts?"}
+{"answer": ["Under intense light", "intense light", "Under intense light"], "question": "When do chloroplasts arrange in vertical columns or turn sideways?"}
+{"answer": ["phosphorylate adenosine diphosphate", "phosphorylate adenosine diphosphate", "energy from the flowing hydrogen ions"], "question": "What does ATP synthase change into ATP?"}
+{"answer": ["3 in 1,000,000", "3 in 1,000,000", "3 in 1,000,000"], "question": "What was the containment failure rate in a tobacco plant study using plastid transformation?"}
+{"answer": ["Gaulish name R\u0113nos", "Rhenus", "the Gaulish name R\u0113nos", "1st century BC", "R\u0113nos"], "question": "What does the name The Rhine come from? "}
+{"answer": ["Switzerland", "Switzerland", "Liechtenstein", "Switzerland", "Switzerland"], "question": "The Rhine forms the border between Austria and what other country? "}
+{"answer": ["Baden-W\u00fcrttemberg", "Baden-W\u00fcrttemberg", "Baden-W\u00fcrttemberg", "Baden-W\u00fcrttemberg"], "question": "Lake Constance separates the German state Bavaria from what other one?"}
+{"answer": ["Duisburg", "Duisburg", "Duisburg"], "question": "What city has the largest inland port in Europe?"}
+{"answer": ["Lothian Regional Council", "Lothian Regional Council", "Lothian Regional Council on George IV Bridge"], "question": "What  former administrative building was used for the MSP's offices?"}
+{"answer": ["The Presiding Officer", "Presiding Officer", "The Presiding Officer"], "question": "Who decides who gets to speak in the chamber debates?"}
+{"answer": ["vote", "vote", "vote"], "question": "What do MSPs who are not in the chamber when the division bell rings return to do?"}
+{"answer": ["Scottish Parliament", "Parliament", "the Parliament"], "question": "Who has the role of holding the Scottish Government to account?"}
+{"answer": ["Mental Health (Care and Treatment) (Scotland) Act 2003", "Mental Health (Care and Treatment) (Scotland) Act 2003", "Mental Health (Care and Treatment) (Scotland) Act 2003"], "question": "What act sets the term for judging the boundaries of sanity to which individuals wishing to sit on the SP must adhere?"}
+{"answer": ["reordering", "reordering of government and society in accordance with the Shari'a", "reordering"], "question": "What goal does Islamism have when it comes to society and government?"}
+{"answer": ["conservative", "strict, conservative", "strict, conservative"], "question": "What type of interpretation of Islam does Salafism promote?"}
+{"answer": ["1948", "1948", "1948"], "question": "When was the Brotherhood first banned in Egypt?"}
+{"answer": ["National Islamic Front", "National Islamic Front", "National Islamic Front"], "question": "What organization did General Gaafar al-Nimeiry invite members of to serve in his government?"}
+{"answer": ["with the help of the military", "with the help of the military", "military"], "question": "How did the party overthrow the elected government in 1989?"}
+{"answer": ["Aboriginal", "Aboriginal", "Aboriginal inhabitants", "Aboriginal"], "question": "What were the native inhabitants of Australia called?"}
+{"answer": ["meaning that all who are truly believers in every age belong to the holy Church invisible", "meaning that all who are truly believers in every age belong to the holy Church invisible, while the United Methodist Church is a branch of the Church visible,", "all who are truly believers in every age belong to the holy Church invisible, while the United Methodist Church is a branch of the Church visible,"], "question": "What is the concept of the visible and invisible Church?"}
+{"answer": ["7.9 million", "7.9 million in the U.S", "7.9 million"], "question": "By the opening of the 2008 General Conference, what was the total UMC membership in the U.S.?"}
+{"answer": ["1760", "1760", "1760", "1760", "1760"], "question": "When was Montreal captured?"}
+{"answer": ["Mi'kmaq and the Abenaki", "Mi'kmaq and the Abenaki", "the Mi'kmaq and the Abenaki", "Mi'kmaq and the Abenaki", "the Mi'kmaq and the Abenaki"], "question": "What tribes were in Father Le Loutre's War?"}
+{"answer": ["the same", "a Galilean transformation", "Galilean transformation", "the laws of physics are the same in every inertial frame of reference", "the same in every inertial frame of reference"], "question": "What are the laws of physics of Galileo, in reference to objest in motion and rest?"}
+{"answer": ["ideal pulleys", "ideal pulleys", "ideal pulleys", "ideal pulleys"], "question": "What do you use to let idea strings switch direction?"}

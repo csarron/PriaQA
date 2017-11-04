@@ -32,6 +32,7 @@ import info.ephyra.questionanalysis.QuestionAnalysis;
 import info.ephyra.questionanalysis.QuestionNormalizer;
 import info.ephyra.search.Result;
 import info.ephyra.search.Search;
+import info.ephyra.search.searchers.GalagoKM;
 import info.ephyra.search.searchers.IndriKM;
 
 import java.util.ArrayList;
@@ -92,10 +93,14 @@ public class OpenEphyraCorpus extends OpenEphyra {
         // search
         // - knowledge miners for unstructured knowledge sources
         Search.clearKnowledgeMiners();
-        for (String[] indriIndices : IndriKM.getIndriIndices())
-            Search.addKnowledgeMiner(new IndriKM(indriIndices, false));
-        for (String[] indriServers : IndriKM.getIndriServers())
-            Search.addKnowledgeMiner(new IndriKM(indriServers, true));
+        String engine = System.getenv("ENGINE");
+        if ("Indri".equalsIgnoreCase(engine)) {
+            for (String[] indriIndices : IndriKM.getIndriIndices())
+                Search.addKnowledgeMiner(new IndriKM(indriIndices, false));
+        } else if ("Galago".equalsIgnoreCase(engine)) {
+            String index = System.getenv("WIKI_INDEX");
+            Search.addKnowledgeMiner(new GalagoKM(index));
+        }
         // - knowledge annotators for (semi-)structured knowledge sources
         Search.clearKnowledgeAnnotators();
 

@@ -93,7 +93,7 @@ public class IndriKM extends KnowledgeMiner {
 
     /**
      * Gets a list of all Indri index directories that have been specified with
-     * environment variables 'INDRI_INDEX', 'INDRI_INDEX2', 'INDRI_INDEX3' etc.
+     * environment variables 'WIKI_INDEX', 'WIKI_INDEX2', 'WIKI_INDEX3' etc.
      * One environment variable can specify multiple indices which are queried
      * with the same knowledge miner.
      *
@@ -102,12 +102,12 @@ public class IndriKM extends KnowledgeMiner {
     public static String[][] getIndriIndices() {
         ArrayList<String[]> indices = new ArrayList<String[]>();
 
-        String index = System.getenv("INDRI_INDEX");
+        String index = System.getenv("WIKI_INDEX");
         //   System.out.println("Index: " + index);
         if (index != null && index.length() > 0)
             indices.add(index.split(";"));
         for (int i = 2; ; i++) {
-            index = System.getenv("INDRI_INDEX" + i);
+            index = System.getenv("WIKI_INDEX" + i);
             if (index != null && index.length() > 0)
                 indices.add(index.split(";"));
             else break;

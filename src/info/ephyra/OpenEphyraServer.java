@@ -231,7 +231,7 @@ public class OpenEphyraServer extends AbstractHandler {
 
         // set log file and enable logging
         Logger.setLogfile("log/OpenEphyra");
-        Logger.enableLogging(true);
+        Logger.enableLogging(false);
 
 //        timestamp = System.currentTimeMillis();
 
@@ -363,11 +363,12 @@ public class OpenEphyraServer extends AbstractHandler {
         Search.clearKnowledgeMiners();
 
         String engine = System.getenv("ENGINE");
-        if ("Indri".equalsIgnoreCase(engine)) {
+        if (engine.startsWith("I") || engine.startsWith("i")) {
             for (String[] indriIndices : IndriKM.getIndriIndices())
                 Search.addKnowledgeMiner(new IndriKM(indriIndices, false));
-        } else if ("Galago".equalsIgnoreCase(engine)) {
-            String index = System.getenv("GALAGO_INDEX");
+        } else{
+            // use galago
+            String index = System.getenv("WIKI_INDEX");
             Search.addKnowledgeMiner(new GalagoKM(index));
         }
 
