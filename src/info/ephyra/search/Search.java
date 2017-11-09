@@ -149,8 +149,10 @@ public class Search {
         // send only the first query to the KnowledgeAnnotators
         if (queries.length > 0) queryKAs(queries[0]);
 
+        if (queries.length > 0) queryKMs(queries[0]);
+
         // send all queries to the KnowledgeMiners
-        for (Query query : queries) queryKMs(query);
+//        for (Query query : queries) queryKMs(query);
 
         // wait until all queries have been completed
         waitForResults();

@@ -11,6 +11,9 @@ import org.lemurproject.galago.core.retrieval.query.StructuredQuery;
 import org.lemurproject.galago.core.tools.apps.BatchSearch;
 import org.lemurproject.galago.utility.Parameters;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,13 +89,45 @@ public class GalagoKM extends KnowledgeMiner {
         return qs;
     }
 
+    private String executeCommand(String command) {
+
+        StringBuilder output = new StringBuilder();
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new
+                    InputStreamReader(p.getErrorStream()));
+
+            String line;
+            while ((line = reader.readLine())!= null) {
+                output.append(line).append("\n");
+            }
+            String s;
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return output.toString();
+
+    }
+
     @Override
     protected Result[] doSearch() {
         MsgPrinter.printStatusMsg("3.2.1 Galago Searching...query string: " + query.getQueryString());
-        MsgPrinter.printStatusMsg("3.2.1 Searching...transformed query string: " + transformQueryString(query.getQueryString()));
-        String queryText = transformQueryString(query.getQueryString());
+//        MsgPrinter.printStatusMsg("3.2.1 Searching...transformed query string: " + transformQueryString(query.getQueryString()));
+        MsgPrinter.printStatusMsg("3.2.1 Galago Searching...analyzed question: " + query.getAnalyzedQuestion().getQuestion());
+//        MsgPrinter.printStatusMsg("3.2.1 Galago Searching...analyzed terms: " + Arrays.toString(query.getAnalyzedQuestion().getTerms()));
 
-        BatchSearch batchSearch = new BatchSearch();
+        String queryText = executeCommand("python3 scripts/get_keywords.py -q "
+                + query.getAnalyzedQuestion().getQuestion());
+        System.out.println("queryText: "+ queryText);
         Parameters queryParams = Parameters.create();
         queryParams.set("index", indexLocation);
         queryParams.set("requested", 5);
@@ -104,7 +139,7 @@ public class GalagoKM extends KnowledgeMiner {
             // parse and transform query into runnable form
             Node root = StructuredQuery.parse(queryText);
             Node transformed = retrieval.transformQuery(root, queryParams);
-            MsgPrinter.printStatusMsg("3.2.1 Searching...transformed galago query string: " + transformed.toPrettyString());
+//            MsgPrinter.printStatusMsg("3.2.1 Searching...transformed galago query string: " + transformed.toPrettyString());
             List<ScoredDocument> queryResults = retrieval.executeQuery(transformed, queryParams).scoredDocuments;
             // if we have some results -- print in to output stream
             if (!queryResults.isEmpty()) {
