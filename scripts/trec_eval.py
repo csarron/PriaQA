@@ -42,9 +42,17 @@ if __name__ == '__main__':
 
         logger.debug('question: %s' % question)
         logger.debug('answer pattern: %s' % answer_patterns)
-
+        t0 = time.time()
         result = get_answer(question, logger)
+        is_correct = False
         for answer_pattern in answer_patterns:
             if regex_match(result, answer_pattern):
                 correct += 1
-        print('no:', count, 'correct:', correct)
+                is_correct = True
+        t1 = time.time()
+        if is_correct:
+            status = 'correct'
+        else:
+            status = 'wrong'
+        print('no:%3d,%8s, total:%3d, [time]: %.4f s' % (count, status, correct, t1 - t0))
+
