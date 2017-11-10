@@ -418,6 +418,8 @@ public class OpenEphyraServer extends AbstractHandler {
 //        MsgPrinter.printSearching();
         long t1 = System.currentTimeMillis();
         System.out.printf("query generation done [time]: %.4f", (t1 - t0) / 1000.0);
+        System.out.println();
+
         MsgPrinter.printStatusMsgTimestamp("3.2 Getting answers....searching");
         Result[] results = Search.doSearch(queries);
 
@@ -425,11 +427,14 @@ public class OpenEphyraServer extends AbstractHandler {
 //        MsgPrinter.printSelectingAnswers();
         long t2 = System.currentTimeMillis();
         System.out.printf("docs retrieved [time]: %.4f", (t2 - t1) / 1000.0);
+        System.out.println();
         MsgPrinter.printStatusMsgTimestamp("3.3 Getting answers....selecting answers");
 
         results = AnswerSelection.getResults(results, maxAnswers, absThresh);
         long t3 = System.currentTimeMillis();
         System.out.printf("answer selected [time]: %.4f", (t3 - t2) / 1000.0);
+        System.out.println();
+
 
         return results;
     }
