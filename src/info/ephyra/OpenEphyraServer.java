@@ -217,6 +217,8 @@ public class OpenEphyraServer extends AbstractHandler {
         if (!AnswerPatternFilter.loadPatterns(dir +
                 "res/patternlearning/answerpatterns/"))
             MsgPrinter.printErrorMsg("Could not load answer patterns.");
+
+        initFactoid();
     }
 
     /**
@@ -463,13 +465,16 @@ public class OpenEphyraServer extends AbstractHandler {
 //        timestamp = System.currentTimeMillis();
         // initialize pipeline
         MsgPrinter.printStatusMsgTimestamp("1. Initializing pipeline....");
-        initFactoid();
+        long t0 = System.currentTimeMillis();
 
         // analyze question
 //        MsgPrinter.printAnalyzingQuestion();
         MsgPrinter.printStatusMsgTimestamp("2. Analyzing question....");
 
         AnalyzedQuestion aq = QuestionAnalysis.analyze(question);
+        long t1 = System.currentTimeMillis();
+        System.out.printf("question analyzed [time]: %.4f", (t1 - t0) / 1000.0);
+        System.out.println();
 
         // get answers
         MsgPrinter.printStatusMsgTimestamp("3. Getting answers....");
