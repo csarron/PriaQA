@@ -54,5 +54,5 @@ if __name__ == '__main__':
             status = 'correct'
         else:
             status = 'wrong'
-        print('no:%3d,%8s, total:%3d, [time]: %.4f s' % (count, status, correct, t1 - t0))
+        logger.info('no:%3d,%8s, total:%3d, [time]: %.4f s' % (count, status, correct, t1 - t0))
 
